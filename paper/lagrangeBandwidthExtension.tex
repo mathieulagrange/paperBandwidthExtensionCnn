@@ -12,7 +12,7 @@
 
 % Title.
 % ------
-\title{Bandwidth extension with no side information using dilated convolutional neural networks}
+\title{Bandwidth extension of musical audio signals with no side information using dilated convolutional neural networks}
 %
 % Single address.
 % ---------------
@@ -48,24 +48,41 @@
 \end{abstract}
 %
 \begin{keywords}
-One, two, three, four, five
+Artificial audio bandwidth extension, deep neural network, musical audio processing
 \end{keywords}
 %
 \section{Introduction}
 \label{sec:intro}
 
-\section{Related work}
-\label{sec:soa}
+Bandwidth extension has a long standing history in telecommunication where the bitrate allowed by the given application may be reduced \cite{larsen2005audio}. In this case, it is often beneficial to preserve a good perceptual quality in the lower frequencies, for example to preserve intelligibility for speech applications. In that case, it may interesting to have a processing unit on the receiver that is able to produce a wide-band signal in order to improve perceived quality given the narrow band signal considering the lower frequencies typically up to 4 kHz for speech,.
 
-\cite{dietz2002spectral, ehret2004audio, ekstrand2002bandwidth, friedrich2007spectral, nagel2009harmonic}
+Many techniques have been introduced, and most of them operates in the spectral domain, where the spectral envelope of the narrow band signal is used to predict the spectral envelope of the higher frequencies. Recent approaches considers deep neural network to do so \cite{abel2017artificial}. This approach assumes a source-filter model for speech production and requires some integration of the two processing units, the one responsible for the narrow band signal decoding and the one responsible for the bandwidth extension. Wavenet architectures can also be considered \cite{gupta2019speech}. In this case, the network directly predict the wide band speech signal, given some information provided by the conditioning stack that processes the narrow band signal. This approach is very flexible, but computationally demanding.
+
+Due to interoperability requirements in telephony, the bandwidth extension process is done without any side information. That is, the processing unit on the decoder side has to predict the higher frequency signal given some static knowledge and the lower frequency signal only.
+
+In general audio coding, bandwidth extension has been introduced in the beginning of the millennium \cite{dietz2002spectral}. General audio coding is more complex than speech coding due to the variety of physical sources that may produce the signal that has to be encoded. Due to this, and the ability to control the whole transmission stack for most use cases, some side information is considered to perform the bandwidth extension process. This side information is computed using the wide band signal at the encoder side and transmitted within the bitstream. In \cite{dietz2002spectral}, the main concept introduced is called spectral band replication (sbr) where the lower frequencies of the magnitude spectra are duplicated and transposed. Due to the typical exponential decay of magnitude with respect to the frequency, the overall magnitude of the transposed spectra has to be adjusted.
+
+Some post processing steps can be undertaken to further improve the perceptual quality. As the encoder has access to the sbr prediction and the reference high frequency spectra, it is able to adapt to some special cases where considering the high frequency spectrum as the low frequency one will fail. For example,  some high frequency tones that are perceptively salient may not be be recreated using the replication process. In this case, an additional processing unit can be considered to produce salient sinusoidal components \cite{ekstrand2002bandwidth}. The lower frequencies may have strong harmonics and the higher ones only noise like components. In this case, an inverse filtering is applied \cite{ehret2004audio}.
+
+Extension for low delay applications have been proposed \cite{friedrich2007spectral}, as well as the application of the phase vocoder \cite{flanagan1966phase} to reduce unpleasant roughness typically introduced when considering sbr tools \cite{nagel2009harmonic}.
+
+Compared to algorithmic approaches discussed above, considering learning approaches have several benefits. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality.
+
+To investigate in this direction, we propose in this paper to consider a deep convolutional network approach that operates in the spectral domain. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication.}
 
 \section{Model}
 \label{sec:model}
 
+architecture
+
+loss
+
+5 citations
+
 \section{Experimental protocol}
 \label{sec:protocol}
 
-dataset
+datasets
 
 metric
 
@@ -86,6 +103,14 @@ ablation study
 
 \section{Discussion}
 \label{sec:discussion}
+
+X Y
+
+good performance analysis properties
+
+extension on generalization studies
+
+potential creative usage
 
 \vfill\pagebreak
 
