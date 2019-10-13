@@ -3,12 +3,15 @@
 %          IEEEbib.bst - IEEE bibliography style file.
 % --------------------------------------------------------------------------
 \documentclass{article}
-\usepackage{spconf,amsmath,graphicx}
+\usepackage{spconf,amsmath,graphicx,xcolor}
 
 % Example definitions.
 % --------------------
 \def\x{{\mathbf x}}
 \def\L{{\cal L}}
+
+\newcommand{\ml}[1]{\textcolor{blue}{ML : #1}}
+\newcommand{\fg}[1]{\textcolor{red}{FG : #1}}
 
 % Title.
 % ------
@@ -56,7 +59,7 @@ Artificial audio bandwidth extension, deep neural network, musical audio process
 
 Bandwidth extension has a long standing history in telecommunication where the bitrate allowed by the given application may be reduced \cite{larsen2005audio}. In this case, it is often beneficial to preserve a good perceptual quality in the lower frequencies, for example to preserve intelligibility for speech applications. In that case, it may interesting to have a processing unit on the receiver that is able to produce a wide-band signal in order to improve perceived quality given the narrow band signal considering the lower frequencies typically up to 4 kHz for speech,.
 
-Many techniques have been introduced, and most of them operates in the spectral domain, where the spectral envelope of the narrow band signal is used to predict the spectral envelope of the higher frequencies. Recent approaches considers deep neural network to do so \cite{abel2017artificial}. This approach assumes a source-filter model for speech production and requires some integration of the two processing units, the one responsible for the narrow band signal decoding and the one responsible for the bandwidth extension. Wavenet architectures can also be considered \cite{gupta2019speech}. In this case, the network directly predict the wide band speech signal, given some information provided by the conditioning stack that processes the narrow band signal. This approach is very flexible, but computationally demanding.
+Many techniques have been introduced, and most of them operates in the spectral domain, where the spectral envelope of the narrow band signal is used to predict the spectral envelope of the higher frequencies. Recent approaches considers deep neural network to do so \cite{abel2017artificial}. This approach assumes a source-filter model for speech production and requires some integration of the two processing units, the one responsible for the narrow band signal decoding and the one responsible for the bandwidth extension. Considering the mapping in the spectral domain using deep neural architecture have been proposed in \cite{li2015deep}. Recurrent neural networks \cite{ling2018waveform} or Wavenet architectures can also be considered \cite{gupta2019speech}. In this case, the network directly predict the wide band speech signal, given some information provided by the conditioning stack that processes the narrow band signal. This approach is very flexible, but computationally demanding.
 
 Due to interoperability requirements in telephony, the bandwidth extension process is done without any side information. That is, the processing unit on the decoder side has to predict the higher frequency signal given some static knowledge and the lower frequency signal only.
 
@@ -66,31 +69,49 @@ Some post processing steps can be undertaken to further improve the perceptual q
 
 Extension for low delay applications have been proposed \cite{friedrich2007spectral}, as well as the application of the phase vocoder \cite{flanagan1966phase} to reduce unpleasant roughness typically introduced when considering sbr tools \cite{nagel2009harmonic}.
 
-Compared to algorithmic approaches discussed above, considering learning approaches have several benefits. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality.
+Compared to algorithmic approaches discussed above, considering learning approaches have several benefits. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality. Non-negative matrix factorization approaches \cite{sun2013non},  and deep learning approaches have recently been considered \cite{miron2018high}.
 
-To investigate in this direction, we propose in this paper to consider a deep convolutional network approach that operates in the spectral domain. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication.}
+To investigate further in this direction, we consider in this paper to consider a deep convolutional network approach that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication.}
 
 \section{Model}
 \label{sec:model}
 
-architecture
+The aim of a bandwidth extension system is to predict the high frequency part . In this paper, we consider audio data represented in the spectral domain. The input and the output of the model consists in 128x10 (frequency x time) matrices that respectively represents the low frequency and high frequency parts of the audio for an approximate duration of $160$ms (more details are provided in Section \ref{sec:protocol}).
 
-loss
-
-5 citations
+\fg{describe the arch and the loss, at least 5 citations, figure}
 
 \section{Experimental protocol}
 \label{sec:protocol}
 
-datasets
+Two datasets are considered in this study, the \textit{gtzan} dataset \cite{tzanetakis2002musical}, and the \textit{medley-solos-DB} dataset \cite{lostanlen2016deep}. The first comprises 100 polyphonic pop songs of 30 seconds for each of the 10 musical genres represented for a total duration of about 8 hours. The second has 21572 audio clips of about 3 seconds, for a total duration of about 18 hours.
 
-metric
+The \textit{gtzan} dataset is split in a training set and testing set using the following procedure. For each genre, the 70 first songs are put in the train set and the 30 remaining in the test set. The \textit{medley-solos-DB} dataset is already split into "training", and "test" datasets, they are considered as is in this study.
 
-baseline
+For both datasets, the audio data is resampled to $8$kHz and converted to spectral data using a short-term Fourier transform with frame size of $256$ samples, hop size of $128$ samples and a Hann window and split into texture windows of $10$ frames.
+
+The resulting spectra are split into 2 parts, the low frequency one, that serves as input to the different models and the high frequency one serves are reference for training the models and computing the evaluation metrics.
+
+Two metrics are considered. The first metric is the average loss on the test set is used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Each batch of texture windows is
+
+Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part qnd the low frequency one, computed for each texture window.
+
+The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}.
+
+\fg{describe the arch and the adaptations made.}
 
 
 \section{Experiments}
 \label{sec:experiments}
+
+baselines
+
+epochs 20, 100
+gtzan / solos
+replicate  / 11.61
+autoStride  15.93, 15.62 / 13.79, 13.26
+autoDense 15.69, 15.58 / 14.11,  13.86
+
+dnn 16.32 / 14.29 : 17 6 64 20 2
 
 ablation study
 
@@ -99,6 +120,8 @@ ablation study
 - depth
 
 - channels
+
+- epochs
 
 
 \section{Discussion}
