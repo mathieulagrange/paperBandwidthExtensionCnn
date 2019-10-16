@@ -78,6 +78,15 @@ To investigate further in this direction, we consider in this paper to consider 
 
 The aim of a bandwidth extension system is to predict the high frequency part . In this paper, we consider audio data represented in the spectral domain. The input and the output of the model consists in 128x10 (frequency x time) matrices that respectively represents the low frequency and high frequency parts of the audio for an approximate duration of $160$ms (more details are provided in Section \ref{sec:protocol}).
 
+The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+
+The model is trained using the mean squared error (MSE) loss function of expression:
+\begin{equation}
+L(y, \hat y) = \frac{1}{N}\sum\limits_{n=1}^{N_b}\sum\limits_{t=1, f=1}^{T, F}(\hat y - y)^2
+\end{equation}
+where $y$ is the ground truth high frequency part of the spectrum, $\hat y$ is the output of the model, $N_b$ is the batch size, ant $T$ and $F$ are the time and frequency dimensions of the output respectively. Optimization is performed using the Adam \cite{kingma2014adam} algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
+
+%TODO Figure
 \fg{describe the arch and the loss, at least 5 citations, figure}
 
 \section{Experimental protocol}
@@ -95,7 +104,7 @@ Two metrics are considered. The first metric is the average loss on the test set
 
 Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part qnd the low frequency one, computed for each texture window.
 
-The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}.
+The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independantly summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independantly on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
 
 \fg{describe the arch and the adaptations made.}
 
