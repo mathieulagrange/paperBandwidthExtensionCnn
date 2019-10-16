@@ -80,14 +80,18 @@ The aim of a bandwidth extension system is to predict the high frequency part. I
 
 The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
 
+\begin{figure}[th]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/mdl.pdf}
+    \caption{Proposed deep convolutional neural network architecture for bandwidth extension.}\label{fig:mdl}
+\end{figure}
+
 The model is trained using the mean squared error (MSE) loss function of expression:
 \begin{equation}
 L(y, \hat y) = \frac{1}{N}\sum\limits_{n=1}^{N_b}\sum\limits_{t=1, f=1}^{T, F}(\hat y - y)^2
 \end{equation}
 where $y$ is the ground truth high frequency part of the spectrum, $\hat y$ is the output of the model, $N_b$ is the batch size, ant $T$ and $F$ are the time and frequency dimensions of the output respectively. Optimization is performed using the Adam \cite{kingma2014adam} algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
 
-%TODO Figure
-\fg{describe the arch and the loss, at least 5 citations, figure}
 
 \section{Experimental protocol}
 \label{sec:protocol}
