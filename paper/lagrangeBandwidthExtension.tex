@@ -106,11 +106,24 @@ Three baselines are considered. The first is a drastically simplified version of
 
 The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independantly summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independantly on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
 
-\fg{describe the arch and the adaptations made.}
-
 
 \section{Experiments}
 \label{sec:experiments}
+
+
+\begin{figure}
+\center
+\includegraphics[width = \columnwidth]{figures/solos_1141.png}
+\caption{Example of spec}
+\label{fig:solos}
+\end{figure}
+
+\begin{figure}
+\center
+\includegraphics[width = \columnwidth]{figures/gtzan_1120.png}
+\caption{}
+\label{fig:gtzan}
+\end{figure}
 
 baselines
 
