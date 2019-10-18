@@ -3,7 +3,7 @@
 %          IEEEbib.bst - IEEE bibliography style file.
 % --------------------------------------------------------------------------
 \documentclass{article}
-\usepackage{spconf,amsmath,graphicx,xcolor}
+\usepackage{spconf,amsmath,graphicx,xcolor,hyperref}
 
 % Example definitions.
 % --------------------
@@ -48,6 +48,13 @@
 %
 \begin{abstract}
 
+dilation
+
+simple fully connected cnn
+
+comparison with compressive architecture, represented by two, demontrate that the proposed architecture achieves state of the art performance on two public datasets, resepctively of monophonic an polyphonic music.
+
+
 \end{abstract}
 %
 \begin{keywords}
@@ -71,14 +78,14 @@ Extension for low delay applications have been proposed \cite{friedrich2007spect
 
 Compared to algorithmic approaches discussed above, considering learning approaches have several benefits. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality. Non-negative matrix factorization approaches \cite{sun2013non},  and deep learning approaches have recently been considered \cite{miron2018high}.
 
-To investigate further in this direction, we consider in this paper to consider a deep convolutional network approach that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication.}
+To investigate further in this direction, we consider in this paper to consider a deep convolutional network approach that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. Our main findings are that: 1) dilation allows us to regularize the performance of the predictor and reduce the complexity of the model while preserving a receptive field adapted to the task at hand, 2) compressive architectures like autoencoders do not perform favorably compared to a fully convolutional neural network. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication on the companion website where some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}
 
 \section{Model}
 \label{sec:model}
 
 The aim of a bandwidth extension system is to predict the high frequency part. In this paper, we consider audio data represented in the spectral domain. The input and the output of the model consists in 128x10 (frequency x time) matrices that respectively represents the low frequency and high frequency parts of the audio for an approximate duration of $160$ms (more details are provided in Section \ref{sec:protocol}).
 
-The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. \fg{reword: Due to the shape of magnitude spectra, the padding by replicating data}. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
 
 \begin{figure}[th]
     \centering
@@ -104,35 +111,45 @@ For both datasets, the audio data is resampled to $8$kHz and converted to spectr
 
 The resulting spectra are split into 2 parts, the low frequency one, that serves as input to the different models and the high frequency one serves are reference for training the models and computing the evaluation metrics.
 
-Two metrics are considered. The first metric is the average loss on the test set is used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Each batch of texture windows is
+Three metrics are considered. The first metric is the average loss on the test set is used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Complex spectral values are computed for each batch of texture windows using the original phase for the low frequency part and several estimates for the high frequency part. The phase can be the original phase, termed \textit{oracle} in the following, the low frequency phase as proposed in \cite{miron2018high} and a flipped version of the low frequency phase as proposed in \cite{li2015deep}, termed \textit{mirror} in the following. The latter gave consistently better results, so only the results achieved using this method are reported.
 
-Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part qnd the low frequency one, computed for each texture window.
+As it will be shown
 
-The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independantly summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independantly on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
+Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part and the low frequency one, computed for each texture window.
 
+The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independently summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ to match the data format considered in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independently on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. %For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
+
+\footnote{Note for reviewers, some other preprocessing steps taken in \cite{miron2018high}, like logarithmical scaling and normalization are not implemented as they lead to numerical instabilities which are still under study. We contacted the authors that will   send us the train/test split. This will hopefully allow us to add the medleys dataset to the study.}
 
 \section{Experiments}
 \label{sec:experiments}
 
+The experiments reported here are conducted in order to study two main design issues for the task at hand:
+\begin{itemize}
+  \item the impact of the dilation on the other meta parameters;
+ \item the impact of compressive architecture by performing a comparative study of a full cnn architecture versus two autoencoder ones.
+\end{itemize}
 
-\begin{figure}
+
+\begin{figure*}[t]
 \center
-\includegraphics[width = .85\columnwidth]{figures/solos_1141.png}
-\caption{Example of spec}
-\label{fig:solos}
-\end{figure}
+\begin{tabular}{cc}
+  (a) & (b) \\
+  \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
+&
+  \includegraphics[width = .95\columnwidth]{figures/solos_1141.png}
+\end{tabular}
+\caption{Examples of predictions for (a) the solos dataset and (b) the \textit{gtzan} dataset. The proposed approach catches correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
+\label{fig:spec}
+\end{figure*}
 
-\begin{figure}
-\center
-\includegraphics[width = .85\columnwidth]{figures/gtzan_1120.png}
-\caption{}
-\label{fig:gtzan}
-\end{figure}
+\subsection{Dilation}
 
+The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achived by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$, see Table \ref{tab:cvsd}.
 
-\begin{table}
+\begin{table}[t]
 \begin{tabular}{llcc}
-kernelSize & dilation & gtzan & medleysolos \\
+$K$ & dilation ($D$) & gtzan & medleysolos \\
 \hline
 13 & 1 & 0.109 $\pm$0.020 & 0.237 $\pm$0.014 \\
 17 & 1 & 0.105 $\pm$0.021 & 0.226 $\pm$0.016 \\
@@ -141,12 +158,13 @@ kernelSize & dilation & gtzan & medleysolos \\
 13 & 3 & - $\pm$- &     - $\pm$- \\
 17 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
-\caption{loss kernel size vs dilation}
+\caption{Loss on the testing set for the proposed architecture with $L=7$ and $C=64$.}
+\label{tab:kvsd}
 \end{table}
 
-\begin{table}
+\begin{table}[t]
 \begin{tabular}{llcc}
-nbLayers & dilation & gtzan & medleysolos \\
+$L$ & dilation ($D$) & gtzan & medleysolos \\
 \hline
 5 & 1 & 0.110 $\pm$0.017 & 0.240 $\pm$0.013 \\
 6 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
@@ -158,12 +176,13 @@ nbLayers & dilation & gtzan & medleysolos \\
 6 & 3 & - $\pm$- &     - $\pm$- \\
 7 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
-\caption{loss layers vs dilation}
+\caption{Loss on the testing set for the proposed architecture with $K=17$ and $C=64$.}
+\label{tab:lvsd}
 \end{table}
 
-\begin{table}
+\begin{table}[t]
 \begin{tabular}{llcc}
-nbChannels & dilation & gtzan & medleysolos \\
+$C$ & dilation ($D$) & gtzan & medleysolos \\
 \hline
  32 & 1 & 0.108 $\pm$0.020 & 0.237 $\pm$0.014 \\
  64 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
@@ -172,10 +191,15 @@ nbChannels & dilation & gtzan & medleysolos \\
  64 & 2 & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
 128 & 2 & 0.101 $\pm$0.020 & 0.220 $\pm$0.017 \\
 \end{tabular}
-\caption{loss channels vs dilation}
+\caption{Loss on the testing set for the proposed architecture with $K=17$ and $L=7$.}
+\label{tab:cvsd}
 \end{table}
 
-\begin{table}
+\subsection{Full cnn versus autoencoders}
+
+
+
+\begin{table}[t]
 \begin{tabular}{lcc}
 method & gtzan & medleysolos \\
 \hline
@@ -187,7 +211,7 @@ autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \end{table}
 
 
-\begin{table}
+\begin{table}[t]
   \begin{tabular}{lcc}
   method   & mirror & oracle \\
   \hline
@@ -232,6 +256,14 @@ X Y
 good performance analysis properties
 
 extension on generalization studies
+
+phase gl and imroved gl
+
+issue with Fourier approaches
+
+multi resolution
+
+time domain deep approaches
 
 potential creative usage
 
