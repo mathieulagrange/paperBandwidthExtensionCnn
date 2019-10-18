@@ -48,11 +48,9 @@
 %
 \begin{abstract}
 
-dilation
+Bandwidth extension has a long history in audio processing. While speech processing tools do not rely on side information, production ready bandwidth extension tools of general audio signal rely on side information that has to be transmitted alongside the bitstream of the low frequency part, mostly because polyphonic music has a more complex and less predictable spectral structure than speech.
 
-simple fully connected cnn
-
-comparison with compressive architecture, represented by two, demontrate that the proposed architecture achieves state of the art performance on two public datasets, resepctively of monophonic an polyphonic music.
+This paper study the benefit of considering dilated full convolutional neural network to perform the bandwidth extension of musical audio signals with no side information in the spectral domain. Experimental comparison with autoencoders, demonstrate that the proposed architecture achieves state of the art performance on two public datasets, respectively of monophonic and polyphonic music.
 
 
 \end{abstract}
@@ -143,9 +141,13 @@ The experiments reported here are conducted in order to study two main design is
 \label{fig:spec}
 \end{figure*}
 
-\subsection{Dilation}
+\subsection*{Dilation}
 
-The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achived by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$, see Table \ref{tab:cvsd}.
+The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
+
+Extending the dilation factor further, $D=3$, is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Following this, a compact but effective architecture is selected with $D=2$, $K=17$, $L=6$, and $C=64$.
+
+\fg{formule pour calculer la taille du receptive field ?}
 
 \begin{table}[t]
 \begin{tabular}{llcc}
@@ -155,8 +157,8 @@ $K$ & dilation ($D$) & gtzan & medleysolos \\
 17 & 1 & 0.105 $\pm$0.021 & 0.226 $\pm$0.016 \\
 13 & 2 & 0.102 $\pm$0.021 & 0.226 $\pm$0.017 \\
 17 & 2 & 0.102 $\pm$0.022 & 0.218 $\pm$0.019 \\
-13 & 3 & - $\pm$- &     - $\pm$- \\
-17 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
+% 13 & 3 & - $\pm$- &     - $\pm$- \\
+% 17 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
 \caption{Loss on the testing set for the proposed architecture with $L=7$ and $C=64$.}
 \label{tab:kvsd}
@@ -172,30 +174,30 @@ $L$ & dilation ($D$) & gtzan & medleysolos \\
 5 & 2 & 0.102 $\pm$0.019 & 0.228 $\pm$0.015 \\
 6 & 2 & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
 7 & 2 & 0.102 $\pm$0.022 & 0.218 $\pm$0.019 \\
-5 & 3 & - $\pm$- &     - $\pm$- \\
-6 & 3 & - $\pm$- &     - $\pm$- \\
-7 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
+% 5 & 3 & - $\pm$- &     - $\pm$- \\
+% 6 & 3 & - $\pm$- &     - $\pm$- \\
+% 7 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
 \caption{Loss on the testing set for the proposed architecture with $K=17$ and $C=64$.}
 \label{tab:lvsd}
 \end{table}
 
-\begin{table}[t]
-\begin{tabular}{llcc}
-$C$ & dilation ($D$) & gtzan & medleysolos \\
-\hline
- 32 & 1 & 0.108 $\pm$0.020 & 0.237 $\pm$0.014 \\
- 64 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
-128 & 1 & 0.107 $\pm$0.019 & 0.233 $\pm$0.014 \\
- 32 & 2 & 0.102 $\pm$0.021 & 0.229 $\pm$0.016 \\
- 64 & 2 & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
-128 & 2 & 0.101 $\pm$0.020 & 0.220 $\pm$0.017 \\
-\end{tabular}
-\caption{Loss on the testing set for the proposed architecture with $K=17$ and $L=7$.}
-\label{tab:cvsd}
-\end{table}
+% \begin{table}[t]
+% \begin{tabular}{llcc}
+% $C$ & dilation ($D$) & gtzan & medleysolos \\
+% \hline
+%  32 & 1 & 0.108 $\pm$0.020 & 0.237 $\pm$0.014 \\
+%  64 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
+% 128 & 1 & 0.107 $\pm$0.019 & 0.233 $\pm$0.014 \\
+%  32 & 2 & 0.102 $\pm$0.021 & 0.229 $\pm$0.016 \\
+%  64 & 2 & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
+% 128 & 2 & 0.101 $\pm$0.020 & 0.220 $\pm$0.017 \\
+% \end{tabular}
+% \caption{Loss on the testing set for the proposed architecture with $K=17$ and $L=7$.}
+% \label{tab:cvsd}
+% \end{table}
 
-\subsection{Full cnn versus autoencoders}
+\subsection*{Full cnn versus autoencoders}
 
 
 
@@ -208,24 +210,6 @@ autoDense & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
 autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \end{tabular}
 \caption{loss proposed 17 6 64 vs soa}
-\end{table}
-
-
-\begin{table}[t]
-  \begin{tabular}{lcc}
-  method   & mirror & oracle \\
-  \hline
-  null & 12.91 $\pm$3.26 &  12.91 $\pm$3.26 \\
-  replicate & 10.84 $\pm$3.30 & 13.30 $\pm$3.22 \\
-\hline
-  autoDense & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
-  autoStride & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
-  \hline
-  proposed  & 11.28 $\pm$2.98 & 16.32 $\pm$3.31\\
-  \hline
-  oracle & 10.51 $\pm$3.26 & $\infty$ \\
-  \end{tabular}
-  \caption{gtzan srr}
 \end{table}
 
 \begin{table}
@@ -242,7 +226,37 @@ proposed  & 10.99 $\pm$2.44 & 14.29 $\pm$2.60 \\
 \hline
 oracle & 10.50 $\pm$3.12 & $\infty$ \\
 \end{tabular}
-\caption{solos srr}
+\caption{Srr achieved by the different methods on the \textit{medely-solosdb} dataset using the \textit{mirror} and \textit{oracle} phase estimates.}
+\label{tab:srrSolos}
+\end{table}
+
+\begin{table}[t]
+  \begin{tabular}{lcc}
+  method   & mirror & oracle \\
+  \hline
+  null & 12.91 $\pm$3.26 &  12.91 $\pm$3.26 \\
+  replicate & 10.84 $\pm$3.30 & 13.30 $\pm$3.22 \\
+\hline
+  autoDense & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
+  autoStride & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
+  \hline
+  proposed  & 11.28 $\pm$2.98 & 16.32 $\pm$3.31\\
+  \hline
+  oracle & 10.51 $\pm$3.26 & $\infty$ \\
+  \end{tabular}
+  \caption{Srr achieved by the different methods on the \textit{gtzan} dataset using the \textit{mirror} and \textit{oracle} phase estimates.}
+  \label{tab:srrGtzan}
+\end{table}
+
+\begin{table}[t]
+\begin{tabular}{lcc}
+method & gtzan & medleysolos \\
+\hline
+dnn & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
+autoDense &  &  \\
+autoStride &  &  \\
+\end{tabular}
+\caption{Overall perceptual score}
 \end{table}
 
 
@@ -257,7 +271,7 @@ good performance analysis properties
 
 extension on generalization studies
 
-phase gl and imroved gl
+phase gl and improved gl
 
 issue with Fourier approaches
 
