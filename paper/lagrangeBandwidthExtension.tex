@@ -90,7 +90,7 @@ To investigate further in this direction, we consider in this paper to consider 
 
 The aim of a bandwidth extension system is to predict the high frequency part. In this paper, we consider audio data represented in the spectral domain. The input and the output of the model consists in 128x10 (frequency x time) matrices that respectively represents the low frequency and high frequency parts of the audio for an approximate duration of $160$ms (more details are provided in Section \ref{sec:protocol}).
 
-The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. \fg{reword: Due to the shape of magnitude spectra, the padding by replicating data}. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively. To keep the shape of magnitude spectra constant throughout the network, representations at the input of each layer are padded by replicating their boundary values depending on the kernel size. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
 
 \begin{figure}[t]
     \centering
@@ -151,6 +151,16 @@ The experiments reported here are conducted in order to study two main design is
 \end{figure*}
 
 \subsection*{Dilation}
+
+The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
+
+Extending the dilation factor further, $D=3$, is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Following this, a compact but effective architecture is selected with $D=2$, $K=17$, $L=6$, and $C=64$.
+
+\fg{formule pour calculer la taille du receptive field, same en temps: input layer + Hidden layers + Output layer}
+\begin{equation}
+R_f = K_f + (L-2)D\frac{K_f-1}{2} + \frac{K_f-1}{2}
+\end{equation}
+
 
 \begin{table}[t]
   \begin{center}
