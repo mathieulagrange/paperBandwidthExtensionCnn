@@ -92,7 +92,7 @@ The aim of a bandwidth extension system is to predict the high frequency part. I
 
 The architecture is a fully convolutional neural network \cite{long2015fully} with $L$ layers followed by rectified linear units (ReLU) activations, as described in Figure~\ref{fig:mdl}. The number of output convolution channels $C$ is the same for all hidden layers. Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively, and inputs of each layer are padded accordingly so that the size of data representations is held constant throughout the network. \fg{reword: Due to the shape of magnitude spectra, the padding by replicating data}. Dilated convolutions \cite{yu2016multi, oord2016wavenet} are considered to artificially increase the receptive field of the model, allowing it to capture patterns on larger scales without added parameters. A fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
 
-\begin{figure}[th]
+\begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/mdl.pdf}
     \caption{Proposed deep convolutional neural network architecture for bandwidth extension.}\label{fig:mdl}
@@ -152,12 +152,6 @@ The experiments reported here are conducted in order to study two main design is
 
 \subsection*{Dilation}
 
-The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
-
-Extending the dilation factor further, $D=3$, is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Following this, a compact but effective architecture is selected with $D=2$, $K=17$, $L=6$, and $C=64$.
-
-\fg{formule pour calculer la taille du receptive field ?}
-
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{llcc}
@@ -173,6 +167,7 @@ $K$ & dilation ($D$) & gtzan & medleysolos \\
 \caption{Spectral loss on the testing set for the proposed architecture with $L=7$ and $C=64$.}
 \label{tab:kvsd}
   \end{center}
+  \vspace{-4mm}
 \end{table}
 
 \begin{table}[t]
@@ -193,7 +188,16 @@ $L$ & dilation ($D$) & gtzan & medleysolos \\
 \caption{Spectral loss on the testing set for the proposed architecture with $K=17$ and $C=64$.}
 \label{tab:lvsd}
 \end{center}
+\vspace{-4mm}
 \end{table}
+
+The dilation parameter $D$ is a very interesting feature of convolutional network as they allow us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filter, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
+
+Extending the dilation factor further, $D=3$, is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Following this, a compact but effective architecture is selected with $D=2$, $K=17$, $L=6$, and $C=64$.
+
+\fg{formule pour calculer la taille du receptive field ?}
+
+
 
 % \begin{table}[t]
 % \begin{tabular}{llcc}
@@ -226,9 +230,14 @@ autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \caption{Spectral loss over the test set.}
 \label{tab:loss}
 \end{center}
+\vspace{-4mm}
 \end{table}
 
 In order to evaluate the proposed approach in the time domain, the srr is considered. As can be seen on Table \ref{tab:srr}, there is a direct inverse correlation between the spectral loss and the srr when considering the oracle phase. Considering the mirror phase strongly reduces the phase correlation between the reference and the estimate leading to low srr even for the oracle estimator. Though, informal listening test shows that considering the oracle estimator using the mirror phase estimate is perceptively more pleasing than the null predictor. We conclude that the sensitivity of the srr to phase shift reduces its usefulness and turn to an objective perceptual measure to better interpret the performance of the predictors.
+
+ As can be seen on Table \ref{tab:ops}, the proposed approach improves over the baselines. Whereas the autoencoder architectures appears to perform similarly in terms of srr, they have different behavior when considering the ops metric, the stride being more effective on monophonic music and the dense being more adapted to polyphonic music.\fg{any clues on architectural explanations ? fait toi plaisir hein :)}
+
+ \ml{perform ttest when all computation is done}
 
 \begin{table}
   \begin{center}
@@ -239,16 +248,17 @@ In order to evaluate the proposed approach in the time domain, the srr is consid
 null & 12.9 $\pm$3.1 & 12.9 $\pm$3.1 & 12.9 $\pm$3.3 &  12.9 $\pm$3.3\\
 replicate & 10.7 $\pm$2.9 & 11.6 $\pm$2.9 & 10.8 $\pm$3.3 & 13.3 $\pm$3.2\\
 \hline
-autoDense & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
+autoDense & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.1 $\pm$3.0 & 15.6 $\pm$3.2 \\
 autoStride & 11.2 $\pm$2.6 & 13.9 $\pm$2.7 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
 \hline
-proposed  & 11 $\pm$2.4 & 14.3 $\pm$2.6  & 11.3 $\pm$3 & 16.3 $\pm$3.3 \\
+proposed  & 11 $\pm$2.4 & 14.3 $\pm$2.6  & 11.3 $\pm$3.0 & 16.3 $\pm$3.3 \\
 \hline
 oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 \end{tabular}
 \caption{Srr achieved by the different methods on the \textit{medely-solosdb} and the \textit{gtzan} datasets using the \textit{mirror} and \textit{oracle} phase estimates.}
 \label{tab:srr}
 \end{center}
+\vspace{-4mm}
 \end{table}
 
 % \begin{table}[t]
@@ -271,39 +281,33 @@ oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 
 
 \begin{table}[t]
-  \begin{center}
+\begin{center}
 \begin{tabular}{lcc}
-method & gtzan & medleysolos \\
+method & medleysolos & gtzan \\
 \hline
-proposed & 42.9 $\pm$5.7 &  $\pm$ \\
-autoDense & 40.6 $\pm$5.8 & 31.7 $\pm$3.2  \\
-autoStride &  &  \\
+proposed & $\pm$ & 42.9 $\pm$5.7 \\
+autoDense & 31.7 $\pm$3.2 & 40.6 $\pm$5.8 \\
+autoStride & 33.3 $\pm$2.7 & 36.9 $\pm$ 5.7 \\
 \end{tabular}
-\caption{Overall perceptual score}
+\caption{Overall perceptual score.}
 \end{center}
+\label{tab:ops}
+\vspace{-4mm}
 \end{table}
-
-
-
 
 \section{Discussion}
 \label{sec:discussion}
 
-X Y
+The benefit of considering a dilated full convolutional neural network for the task of predicting the high frequency part of the magnitude spectra using the low frequency part have been studied. The proposed architecture has been thoroughly evaluated in terms of several metrics, from the optimized loss to an objective perceptual measure.
 
-good performance analysis properties
+Considering the Fourier spectrum as input has several drawbacks. Time/Frequency resolution tradeoff and phase estimation inherently limit the potential of the proposed approach. Future work will considered more advanced phase estimators as well as sample based deep architectures. The dependency to the training set on the behavior of the predictors will also be studied.
 
-extension on generalization studies
+%We believe that considering the bandwidth extension task has several benefits for gaining knowledge on the behavior of deep neural architecture and seek to pursue this line of research.
 
-phase gl and improved gl
 
-issue with Fourier approaches
 
-multi resolution
+Alongside those technical issues, we also believe that considering this task with varied learning and testing sets, \textit{i.e.} predicting the high frequency spectra of a 'pop' song using network trained on 'country' songs may be of creative interest to explore yet to be defined formal definitions of musical style transfer \cite{dai2018music}.
 
-time domain deep approaches
-
-potential creative usage
 
 \vfill\pagebreak
 
