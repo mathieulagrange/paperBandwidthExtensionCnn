@@ -4,7 +4,14 @@
 % --------------------------------------------------------------------------
 \documentclass{article}
 \usepackage{spconf,amsmath,graphicx,xcolor,hyperref}
-
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    bookmarks=true,
+    citecolor=magenta,
+}
 % Example definitions.
 % --------------------
 \def\x{{\mathbf x}}
@@ -111,13 +118,15 @@ The resulting spectra are split into 2 parts, the low frequency one, that serves
 
 Three metrics are considered. The first metric is the average loss on the test set is used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Complex spectral values are computed for each batch of texture windows using the original phase for the low frequency part and several estimates for the high frequency part. The phase can be the original phase, termed \textit{oracle} in the following, the low frequency phase as proposed in \cite{miron2018high} and a flipped version of the low frequency phase as proposed in \cite{li2015deep}, termed \textit{mirror} in the following. The latter gave consistently better results, so only the results achieved using this method are reported.
 
-As it will be discussed in Section \ref{sec:experiments}, loss of phase correspondence results lead to the srr being no longer relevant as a performance metric. Ultimately, subjective evaluation by means of listening tests performed by humans is desirable. However, setting up those tests is time consuming and considering the whole datasets as stimuli is impractical. This issue is left for future research. A good alternative is the use of objective metrics based on perceptual models that have been proposed and used with success in many audio signal processing tasks, such as the overall degradation grade (odg) of the perceptual evaluation of audio quality tool (peaq) \cite{thiede2000peaq} and the overall perceptual score (ops) of perceptual evaluation methods for audio soure separation tool  (peass) \cite{emiya2011subjective}. The first has the advantage of being part of an ITU standard and the second considers an advanced hair cell model and some other improvements. Both have been considered in this study, but as the two appear to be correlated in those experiments, only the second is reported.
+As it will be discussed in Section \ref{sec:experiments}, loss of phase correspondence results lead to the srr being no longer relevant as a performance metric. Ultimately, subjective evaluation by means of listening tests performed by humans is desirable. However, setting up those tests is time consuming and considering the whole datasets as stimuli is impractical. This issue is left for future research. A good alternative is the use of objective metrics based on perceptual models that have been proposed and used with success in many audio signal processing tasks, such as the overall difference grade (odg) of the perceptual evaluation of audio quality tool (peaq) \cite{thiede2000peaq} and the overall perceptual score (ops) of perceptual evaluation methods for audio soure separation tool  (peass) \cite{emiya2011subjective}. The first has the advantage of being part of an ITU standard and the second considers an advanced hair cell model and some other improvements. Both have been considered in this study, but as the two appear to be correlated in those experiments, only the second is reported.
 
 Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part and the low frequency one, computed for each texture window.
 
 The second and the third ones are reimplementation of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independently summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ to match the data format considered in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independently on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. %For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
 
-\footnote{Note for reviewers, some other preprocessing steps taken in \cite{miron2018high}, like logarithmical scaling and normalization are not implemented as they lead to numerical instabilities which are still under study. We contacted the authors that will   send us the train/test split. This will hopefully allow us to add the medleys dataset to the study.}
+%\footnote{Note for reviewers, some other preprocessing steps taken in \cite{miron2018high}, like logarithmical scaling and normalization are not implemented as they lead to numerical instabilities which are still under study. We also contacted the authors that will send us the train/test split. This will hopefully allow us to add the medleys dataset to the study.}
+
+Additionally, two anchors are considered: the \textit{oracle} predictor that "predicts" the actual high frequency spectral pattern and the \textit{null} predictor that outputs a vector of zeros.
 
 \section{Experiments}
 \label{sec:experiments}
@@ -150,6 +159,7 @@ Extending the dilation factor further, $D=3$, is not beneficial, as the receptiv
 \fg{formule pour calculer la taille du receptive field ?}
 
 \begin{table}[t]
+  \begin{center}
 \begin{tabular}{llcc}
 $K$ & dilation ($D$) & gtzan & medleysolos \\
 \hline
@@ -160,11 +170,13 @@ $K$ & dilation ($D$) & gtzan & medleysolos \\
 % 13 & 3 & - $\pm$- &     - $\pm$- \\
 % 17 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
-\caption{Loss on the testing set for the proposed architecture with $L=7$ and $C=64$.}
+\caption{Spectral loss on the testing set for the proposed architecture with $L=7$ and $C=64$.}
 \label{tab:kvsd}
+  \end{center}
 \end{table}
 
 \begin{table}[t]
+  \begin{center}
 \begin{tabular}{llcc}
 $L$ & dilation ($D$) & gtzan & medleysolos \\
 \hline
@@ -178,8 +190,9 @@ $L$ & dilation ($D$) & gtzan & medleysolos \\
 % 6 & 3 & - $\pm$- &     - $\pm$- \\
 % 7 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
 \end{tabular}
-\caption{Loss on the testing set for the proposed architecture with $K=17$ and $C=64$.}
+\caption{Spectral loss on the testing set for the proposed architecture with $K=17$ and $C=64$.}
 \label{tab:lvsd}
+\end{center}
 \end{table}
 
 % \begin{table}[t]
@@ -199,64 +212,75 @@ $L$ & dilation ($D$) & gtzan & medleysolos \\
 
 \subsection*{Full cnn versus autoencoders}
 
-
+Compared to the two encoders baselines, the proposed approach compares favorably in terms of spectral loss, see Table \ref{tab:loss}. An advantage of considering spectral bandwidth extension as task is the ease of fine grain performance analysis. Contrary to classification or generation pipelines the input and the output of the network are equivalent quantitatively and qualitatively speaking. It allow us to visually interpret the behavior of the predictors. As can be seen on Figure \ref{fig:spec}, the proposed approach catches correctly the harmonic structures and the average magnitude of more complex spectral shapes.
 
 \begin{table}[t]
+  \begin{center}
 \begin{tabular}{lcc}
 method & gtzan & medleysolos \\
 \hline
-dnn & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
+proposed & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
 autoDense & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
 autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \end{tabular}
-\caption{loss proposed 17 6 64 vs soa}
+\caption{Spectral loss over the test set.}
+\label{tab:loss}
+\end{center}
 \end{table}
+
+In order to evaluate the proposed approach in the time domain, the srr is considered. As can be seen on Table \ref{tab:srr}, there is a direct inverse correlation between the spectral loss and the srr when considering the oracle phase. Considering the mirror phase strongly reduces the phase correlation between the reference and the estimate leading to low srr even for the oracle estimator. Though, informal listening test shows that considering the oracle estimator using the mirror phase estimate is perceptively more pleasing than the null predictor. We conclude that the sensitivity of the srr to phase shift reduces its usefulness and turn to an objective perceptual measure to better interpret the performance of the predictors.
 
 \begin{table}
-\begin{tabular}{lcc}
-method & mirror & oracle \\
+  \begin{center}
+\begin{tabular}{lcc|cc}
+  & \multicolumn{2}{c}{medleysolos} & \multicolumn{2}{c}{gtzan} \\
+  method & mirror & oracle & mirror & oracle \\
 \hline
-null & 12.93 $\pm$3.11 & 12.93 $\pm$3.11\\
-replicate & 10.70 $\pm$2.90 & 11.61 $\pm$2.88\\
+null & 12.9 $\pm$3.1 & 12.9 $\pm$3.1 & 12.9 $\pm$3.3 &  12.9 $\pm$3.3\\
+replicate & 10.7 $\pm$2.9 & 11.6 $\pm$2.9 & 10.8 $\pm$3.3 & 13.3 $\pm$3.2\\
 \hline
-autoDense & 10.59 $\pm$2.54 &  13.26 $\pm$2.77\\
-autoStride & 11.23 $\pm$2.58 & 13.86 $\pm$2.69 \\
+autoDense & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
+autoStride & 11.2 $\pm$2.6 & 13.9 $\pm$2.7 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
 \hline
-proposed  & 10.99 $\pm$2.44 & 14.29 $\pm$2.60 \\
+proposed  & 11 $\pm$2.4 & 14.3 $\pm$2.6  & 11.3 $\pm$3 & 16.3 $\pm$3.3 \\
 \hline
-oracle & 10.50 $\pm$3.12 & $\infty$ \\
+oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 \end{tabular}
-\caption{Srr achieved by the different methods on the \textit{medely-solosdb} dataset using the \textit{mirror} and \textit{oracle} phase estimates.}
-\label{tab:srrSolos}
+\caption{Srr achieved by the different methods on the \textit{medely-solosdb} and the \textit{gtzan} datasets using the \textit{mirror} and \textit{oracle} phase estimates.}
+\label{tab:srr}
+\end{center}
 \end{table}
 
-\begin{table}[t]
-  \begin{tabular}{lcc}
-  method   & mirror & oracle \\
-  \hline
-  null & 12.91 $\pm$3.26 &  12.91 $\pm$3.26 \\
-  replicate & 10.84 $\pm$3.30 & 13.30 $\pm$3.22 \\
-\hline
-  autoDense & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
-  autoStride & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
-  \hline
-  proposed  & 11.28 $\pm$2.98 & 16.32 $\pm$3.31\\
-  \hline
-  oracle & 10.51 $\pm$3.26 & $\infty$ \\
-  \end{tabular}
-  \caption{Srr achieved by the different methods on the \textit{gtzan} dataset using the \textit{mirror} and \textit{oracle} phase estimates.}
-  \label{tab:srrGtzan}
-\end{table}
+% \begin{table}[t]
+%   \begin{tabular}{lcc}
+%   method   & mirror & oracle \\
+%   \hline
+%   null & 12.91 $\pm$3.26 &  12.91 $\pm$3.26 \\
+%   replicate & 10.84 $\pm$3.30 & 13.30 $\pm$3.22 \\
+% \hline
+%   autoDense & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
+%   autoStride & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
+%   \hline
+%   proposed  & 11.28 $\pm$2.98 & 16.32 $\pm$3.31\\
+%   \hline
+%   oracle & 10.51 $\pm$3.26 & $\infty$ \\
+%   \end{tabular}
+%   \caption{Srr achieved by the different methods on the \textit{gtzan} dataset using the \textit{mirror} and \textit{oracle} phase estimates.}
+%   \label{tab:srrGtzan}
+% \end{table}
+
 
 \begin{table}[t]
+  \begin{center}
 \begin{tabular}{lcc}
 method & gtzan & medleysolos \\
 \hline
-dnn & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
-autoDense &  &  \\
+proposed & 42.9 $\pm$5.7 &  $\pm$ \\
+autoDense & 40.6 $\pm$5.8 & 31.7 $\pm$3.2  \\
 autoStride &  &  \\
 \end{tabular}
 \caption{Overall perceptual score}
+\end{center}
 \end{table}
 
 
