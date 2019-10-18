@@ -113,7 +113,7 @@ The resulting spectra are split into 2 parts, the low frequency one, that serves
 
 Three metrics are considered. The first metric is the average loss on the test set is used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Complex spectral values are computed for each batch of texture windows using the original phase for the low frequency part and several estimates for the high frequency part. The phase can be the original phase, termed \textit{oracle} in the following, the low frequency phase as proposed in \cite{miron2018high} and a flipped version of the low frequency phase as proposed in \cite{li2015deep}, termed \textit{mirror} in the following. The latter gave consistently better results, so only the results achieved using this method are reported.
 
-As it will be shown
+As it will be discussed in Section \ref{sec:experiments}, loss of phase correspondence results lead to the srr being no longer relevant as a performance metric. Ultimately, subjective evaluation by means of listening tests performed by humans is desirable. However, setting up those tests is time consuming and considering the whole datasets as stimuli is impractical. This issue is left for future research. A good alternative is the use of objective metrics based on perceptual models that have been proposed and used with success in many audio signal processing tasks, such as the overall degradation grade (odg) of the perceptual evaluation of audio quality tool (peaq) \cite{thiede2000peaq} and the overall perceptual score (ops) of perceptual evaluation methods for audio soure separation tool  (peass) \cite{emiya2011subjective}. The first has the advantage of being part of an ITU standard and the second considers an advanced hair cell model and some other improvements. Both have been considered in this study, but as the two appear to be correlated in those experiments, only the second is reported.
 
 Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor, defined as the ratio of average amplitude between the high frequency part and the low frequency one, computed for each texture window.
 
@@ -135,9 +135,9 @@ The experiments reported here are conducted in order to study two main design is
 \center
 \begin{tabular}{cc}
   (a) & (b) \\
-  \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
-&
   \includegraphics[width = .95\columnwidth]{figures/solos_1141.png}
+&
+  \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
 \end{tabular}
 \caption{Examples of predictions for (a) the solos dataset and (b) the \textit{gtzan} dataset. The proposed approach catches correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
 \label{fig:spec}
