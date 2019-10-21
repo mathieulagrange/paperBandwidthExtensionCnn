@@ -81,9 +81,9 @@ Some post processing steps can be undertaken to further improve the perceptual q
 
 Extension for low delay applications have been proposed \cite{friedrich2007spectral}, as well as the application of the phase vocoder \cite{flanagan1966phase} to reduce unpleasant roughness typically introduced when considering sbr tools \cite{nagel2009harmonic}.
 
-Compared to algorithmic approaches discussed above, considering learning approaches has several benefits. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality. Non-negative matrix factorization approaches \cite{sun2013non}, and deep learning approaches have recently been considered \cite{miron2018high}. \fg{Peut etre mettre cette phrase avant}
+Learning approaches, such as non-negative matrix factorization \cite{sun2013non}, and deep learning approaches \cite{miron2018high} been considered, has several benefits compared to algorithmic approaches discussed above. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality.
 
-To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. Our main findings are that: 1) dilation allows us to regularize\fg{pas sur que ce soit le bon terme} the performance of the predictor and reduce the complexity of the model while preserving a receptive field adapted to the task at hand, 2) compressive architectures like autoencoders do not perform favorably compared to a fully convolutional neural network\fg{un AE peut etre fully convolutional (autostride), j'ajouterais sans compression}. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication on the companion website where some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}
+To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. Our main findings are that: 1) dilation allows us to the architecture to be less sensitive to the tuning of the other meta-parameter and reduce the complexity of the model while preserving a receptive field adapted to the task at hand, 2) compressive architectures like autoencoders do not perform favorably compared to a fully convolutional neural network without compression. \footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication on the companion website where some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}
 
 \section{Model}
 \label{sec:model}
@@ -108,9 +108,9 @@ where $y$ is the ground truth high frequency part of the spectrum, $\hat y$ is t
 \section{Experimental protocol}
 \label{sec:protocol}
 
-Two datasets are considered in this study, the \textit{gtzan} dataset \cite{tzanetakis2002musical}, and the \textit{medley-solos-DB} dataset \cite{lostanlen2016deep}. The first comprises 100 polyphonic pop songs of 30 seconds each for each of the 10 musical genres represented, for a total duration of about 8 hours. The second has 21572 audio clips of about 3 seconds, for a total duration of about 18 hours.\fg{monophonic?}
+Two datasets are considered in this study, the \textit{medley-solos-DB} dataset \cite{lostanlen2016deep}, and the \textit{gtzan} dataset \cite{tzanetakis2002musical}. The first has 21572 monophonic audio clips of about 3 seconds, for a total duration of about 18 hours. The second comprises 100 polyphonic pop songs of 30 seconds each for each of the 10 musical genres represented, for a total duration of about 8 hours.
 
-The \textit{gtzan} dataset is split in a train set and a test set using the following procedure. For each genre, the first 70 songs are put in the train set and the remaining 30 in the test set. The \textit{medley-solos-DB} dataset is already split into "training", and "test" datasets, they are considered as is in this study.
+The \textit{medley-solos-DB} dataset is already split into "training", and "test" datasets, they are considered as is in this study. The \textit{gtzan} dataset is split in a train set and a test set using the following procedure. For each genre, the first 70 songs are put in the train set and the remaining 30 in the test set.
 
 For both datasets, the audio data is resampled to $8$kHz and converted to spectral data using a short-term Fourier transform with frame size of $256$ samples, hop size of $128$ samples and a Hann window. Extracts are further split into texture windows of $10$ frames processed as individual examples.
 
@@ -118,11 +118,11 @@ The resulting spectra are split into 2 parts, the low frequency one, that serves
 
 Three metrics are considered. The first metric is the average loss on the test set used to get a global understanding of the behavior of the predictors in the spectral domain. The second metric is the average signal-to-reconstruction ratio (srr), computed in the time domain. Complex spectral values are computed for each batch of texture windows using the original phase for the low frequency part and one of several estimates for the high frequency part. The phase can be the original phase, termed \textit{oracle} in the following, the low frequency phase as proposed in \cite{miron2018high} and a flipped version of the low frequency phase as proposed in \cite{li2015deep}, termed \textit{mirror} in the following. The latter gave consistently better results, so only the results achieved using this method are reported.
 
-As it will be discussed in Section \ref{sec:experiments}, loss of phase correspondence results \fg{?} lead to the srr being no longer relevant as a performance metric. Ultimately, subjective evaluation by means of listening tests performed by humans is desirable. However, setting up those tests is time consuming and considering the whole datasets as stimuli is impractical. This issue is left for future research. A good alternative is the use of objective metrics based on perceptual models that have been proposed and used with success in many audio signal processing tasks, such as the overall difference grade (odg) of the perceptual evaluation of audio quality tool (peaq) \cite{thiede2000peaq} and the overall perceptual score (ops) of perceptual evaluation methods for audio soure separation tool (peass) \cite{emiya2011subjective}. The first has the advantage of being part of an ITU standard and the second considers an advanced hair cell model and some other improvements. Both have been considered in this study, but as the two appear to be correlated in those experiments, only the second is reported.
+As it will be discussed in Section \ref{sec:experiments}, loss of phase correspondence between the predicted and reference complex spectra lead to the srr being no longer relevant as a performance metric. Ultimately, subjective evaluation by means of listening tests performed by humans is desirable. However, setting up those tests is time consuming and considering the whole datasets as stimuli is impractical. This issue is left for future research. A good alternative is the use of objective metrics based on perceptual models that have been proposed and used with success in many audio signal processing tasks, such as the overall difference grade (odg) of the perceptual evaluation of audio quality tool (peaq) \cite{thiede2000peaq} and the overall perceptual score (ops) of perceptual evaluation methods for audio source separation tool (peass) \cite{emiya2011subjective}. As the second considers an advanced hair cell model and some other improvements, only the second one is reported.
 
-Three baselines are considered. The first is a drastically simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. Please note that this baseline requires some side information, that is the amplitude scaling factor defined as the ratio of average amplitude between the high frequency part and the low frequency one, computed for each texture window.
+Three baselines are considered. The first is a simplified version of the sbr technique, where the high frequency part is simply the low frequency part whose amplitudes are scaled. This baseline requires some side information, that is the amplitude scaling factor defined as the ratio of average amplitude between the high frequency part and the low frequency one, computed for each texture window.
 
-The second and the third ones are reimplementations of the deep architectures presented in \cite{miron2018high}. The \textit{CNN bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independently summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ to match the data format considered in this study. The \textit{CNN stride-2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independently on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. %For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
+The second and the third ones are reimplementations of the deep architectures presented in \cite{miron2018high}. The \textit{cnn bottleneck} encoder part consists in two convolutional layers with filters of size $(1, F)$ and $(T, 1)$ that independently summarize information in the frequency and time dimensions of the input data respectively. A fully connected layer is then applied to extract a code of $64$. The decoder part mirrors these processing steps to recover a spectrum with the original input size. This model is implemented as described in \cite{miron2018high}, though with different filter sizes as $F=128$ and $T=10$ to match the data format considered in this study. The \textit{cnn stride2} autoencoder adopts a different strategy where frequency patterns information is extracted at multiple scales using strided convolutions. The first four layers operate independently on each time frame, and are followed by two convolutional layers with square kernels. The number of channels increases linearly with each additional layer. In this study, the first two layers are removed to account for the difference in the size of the frequency dimension in considered spectra. %For both architectures input examples are logarithmically scaled using the function $log_{10}(1+x)$ to account for the magnitude difference between low and high frequencies, as described by the authors.
 
 %\footnote{Note for reviewers, some other preprocessing steps taken in \cite{miron2018high}, like logarithmical scaling and normalization are not implemented as they lead to numerical instabilities which are still under study. We also contacted the authors that will send us the train/test split. This will hopefully allow us to add the medleys dataset to the study.}
 
@@ -134,7 +134,7 @@ Additionally, two anchors are considered: the \textit{oracle} predictor that "pr
 The experiments reported here are conducted in order to study two main design issues for the task at hand:
 \begin{itemize}
   \item the impact of the dilation on the other meta parameters;
-  \item the impact of compressive architecture by performing a comparative study of a full cnn architecture versus two autoencoder ones.\fg{a reformuler}
+  \item the impact of the compression used in the design of autoencoders\ml{c'est mieux, sinon fais le :)}.
 \end{itemize}
 
 
@@ -146,21 +146,22 @@ The experiments reported here are conducted in order to study two main design is
 &
   \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
 \end{tabular}
-\caption{Examples of predictions for (a) the solos dataset and (b) the \textit{gtzan} dataset. The proposed approach catches correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
+\caption{Examples of predictions for (a) the solos dataset and (b) the \textit{gtzan} dataset. The proposed model handles correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
 \label{fig:spec}
 \end{figure*}
 
 \subsection*{Dilation}
 
-The dilation parameter $D$ is a very interesting feature of convolutional networks as it allows us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filters, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more sensible on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same regularization effect of $D$ on $L$. As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
-\fg{Enlever la derniere phrase ou l'expliciter}
+The dilation parameter $D$ is a very interesting feature of convolutional networks as it allows us to expand the receptive field without increasing the model complexity. The other parameters that controls its size are $K$ the size of the filters, and $L$ the number of layers. As can be seen on Table \ref{tab:kvsd}, $D=2$ allows us to reduce the loss and also to reduce the gain achieved by increasing $K$. The effect is more important on the \textit{gtzan} dataset. Table \ref{tab:lvsd} shows the same effect of $D$ on $L$. %As predictable, this regularization effect is not present on $C$ (not shown due to space constraints). %see Table \ref{tab:cvsd}.
+%\fg{Enlever la derniere phrase ou l'expliciter}
 
-Further increasing the dilation factor to $D=3$ is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Following this, a compact but effective architecture is selected with $D=2$, $K=17$, $L=6$, and $C=64$.
+Further increasing the dilation factor to $D=3$ is not beneficial, as the receptive field is sufficiently large with $D=2$ (values not shown due to space constraints). Indeed, with $D=2$, $K=17$, $L=6$, it lead to a receptive field size of $89$ where the input and output of the predictor is of size $64$. This setting with $C=64$ is selected for the remaining of the experiments.
 
-\fg{formule pour calculer la taille du receptive field, same en temps: input layer + Hidden layers + Output layer}
-\begin{equation}
-R_f = K_f + (L-2)D\frac{K_f-1}{2} + \frac{K_f-1}{2}
-\end{equation}
+%
+% \fg{formule pour calculer la taille du receptive field, same en temps: input layer + Hidden layers + Output layer}
+% \begin{equation}
+% R_f = K_f + (L-2)D\frac{K_f-1}{2} + \frac{K_f-1}{2}
+% \end{equation}
 
 
 \begin{table}[t]
@@ -221,9 +222,9 @@ $L$ & dilation ($D$) & gtzan & medleysolos \\
 % \label{tab:cvsd}
 % \end{table}
 
-\subsection*{Full CNN versus autoencoders}
+\subsection*{Full cnn versus autoencoders}
 
-Compared to the two encoder-decoder baselines, the proposed approach compares favorably in terms of spectral loss, see Table \ref{tab:loss}. An advantage of considering spectral bandwidth extension as task is the ease of fine grain performance analysis. Contrary to classification or generation pipelines the input and the output of the network are equivalent quantitatively and qualitatively speaking \fg{Pas le modele propose si?}. It allows us to visually interpret the behavior of the predictors \fg{en quoi ce n'est pas le cas pour les modeles generatifs?}. As can be seen on Figure \ref{fig:spec}, the proposed approach catches \fg{pas le bon mot je pense, idem dans la caption} correctly the harmonic structures and the average magnitude of more complex spectral shapes.
+Compared to the two encoder-decoder baselines, the proposed approach compares favorably in terms of spectral loss, see Table \ref{tab:loss}. An advantage of considering spectral bandwidth extension as task is the ease of fine grain performance analysis. Contrary to classification pipelines, the input and the output of the network are equivalent in terms of physical interpretation. It allows us to visually interpret the behavior of the predictors. As can be seen on Figure \ref{fig:spec}, the proposed model handles correctly the harmonic structures and the average magnitude of more complex spectral shapes.
 
 \begin{table}[t]
   \begin{center}
@@ -231,8 +232,8 @@ Compared to the two encoder-decoder baselines, the proposed approach compares fa
 method & gtzan & medleysolos \\
 \hline
 proposed & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
-autoDense & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
-autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
+cnn-bottleneck & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
+cnn stride2 & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \end{tabular}
 \caption{Spectral loss over the test set.}
 \label{tab:loss}
@@ -240,9 +241,9 @@ autoStride & 0.110 $\pm$0.017 & 0.228 $\pm$0.013 \\
 \vspace{-4mm}
 \end{table}
 
-In order to evaluate the proposed approach in the time domain, the srr is considered. As can be seen on Table \ref{tab:srr}, there is a direct inverse correlation between the spectral loss and the srr when considering the oracle phase. Considering the mirror phase strongly reduces the phase correlation between the reference and the estimate leading to low srr even for the oracle \fg{magnitude?} estimator. Though, informal listening test shows that considering the oracle estimator using the mirror phase estimate is perceptively more pleasing than the null predictor. We conclude that the sensitivity of the srr to phase shift reduces its usefulness and turn to an objective perceptual measure to better assess the performance of the predictors.
+In order to evaluate the proposed approach in the time domain, the srr is considered. As can be seen on Table \ref{tab:srr}, there is a direct inverse correlation between the spectral loss and the srr when considering the oracle phase. Considering the mirror phase strongly reduces the phase correlation between the reference and the estimate leading to low srr even for the oracle magnitude estimator. Though, informal listening test shows that considering the oracle estimator using the mirror phase estimate is perceptively more pleasing than the null predictor. We conclude that the sensitivity of the srr to phase shift reduces its usefulness and turn to an objective perceptual measure to better assess the performance of the predictors.
 
-As can be seen on Table \ref{tab:ops}, the proposed approach improves over the baselines in terms of the overall perceptual score. Whereas the autoencoder architectures appears to perform similarly in terms of srr, they have different behavior when considering the ops metric, the stride being more effective on monophonic music and the dense being more adapted to polyphonic music.\fg{any clues on architectural explanations ? fait toi plaisir hein :) -> Aucune :(}
+As can be seen on Table \ref{tab:ops}, the proposed approach improves over the baselines in terms of the overall perceptual score. Whereas the autoencoder architectures appears to perform similarly in terms of srr, they have different behavior when considering the ops metric, the stride being more effective on monophonic music and the dense being more adapted to polyphonic music.
 
  \ml{perform ttest when all computation is done}
 
@@ -255,8 +256,8 @@ As can be seen on Table \ref{tab:ops}, the proposed approach improves over the b
 null & 12.9 $\pm$3.1 & 12.9 $\pm$3.1 & 12.9 $\pm$3.3 &  12.9 $\pm$3.3\\
 replicate & 10.7 $\pm$2.9 & 11.6 $\pm$2.9 & 10.8 $\pm$3.3 & 13.3 $\pm$3.2\\
 \hline
-autoDense & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.1 $\pm$3.0 & 15.6 $\pm$3.2 \\
-autoStride & 11.2 $\pm$2.6 & 13.9 $\pm$2.7 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
+cnn-bottleneck & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.1 $\pm$3.0 & 15.6 $\pm$3.2 \\
+cnn stride2 & 11.2 $\pm$2.6 & 13.9 $\pm$2.7 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
 \hline
 proposed  & 11 $\pm$2.4 & 14.3 $\pm$2.6  & 11.3 $\pm$3.0 & 16.3 $\pm$3.3 \\
 \hline
@@ -275,8 +276,8 @@ oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 %   null & 12.91 $\pm$3.26 &  12.91 $\pm$3.26 \\
 %   replicate & 10.84 $\pm$3.30 & 13.30 $\pm$3.22 \\
 % \hline
-%   autoDense & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
-%   autoStride & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
+%   cnn-bottleneck & 11.14 $\pm$2.98 & 15.62 $\pm$3.23 \\
+%   cnn stride2 & 11.20 $\pm$2.84 & 15.58 $\pm$3.10 \\
 %   \hline
 %   proposed  & 11.28 $\pm$2.98 & 16.32 $\pm$3.31\\
 %   \hline
@@ -293,11 +294,11 @@ oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 method & medleysolos & gtzan \\
 \hline
 null & $\pm$ & 13.0$\pm$1.9  \\
-replicate & $\pm$ & 29.7$\pm$4.9 \\
+replicate & 25.6$\pm$3.6 & 29.7$\pm$4.9 \\
 \hline
 proposed & 34.2 $\pm$3.2 & 42.9 $\pm$5.7 \\
-autoDense & 31.7 $\pm$3.2 & 40.6 $\pm$5.8 \\
-autoStride & 33.3 $\pm$2.7 & 36.9 $\pm$ 5.7 \\
+cnn-bottleneck & 31.7 $\pm$3.2 & 40.6 $\pm$5.8 \\
+cnn stride2 & 33.3 $\pm$2.7 & 36.9 $\pm$ 5.7 \\
 \hline
 oracle  & $\pm$ & 78.4$\pm$10.9  \\
 \end{tabular}
