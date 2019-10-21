@@ -108,9 +108,9 @@ where $y$ is the ground truth high frequency part of the spectrum, $\hat y$ is t
 \section{Experimental protocol}
 \label{sec:protocol}
 
-Two datasets are considered in this study, the \textit{medley-solos-DB} dataset \cite{lostanlen2016deep}, and the \textit{gtzan} dataset \cite{tzanetakis2002musical}. The first has 21572 monophonic audio clips of about 3 seconds, for a total duration of about 18 hours. The second comprises 100 polyphonic pop songs of 30 seconds each for each of the 10 musical genres represented, for a total duration of about 8 hours.
+Two datasets are considered in this study, the \textit{medley-solos-db} dataset \cite{lostanlen2016deep}, and the \textit{gtzan} dataset \cite{tzanetakis2002musical}. The first has 21572 monophonic audio clips of about 3 seconds, for a total duration of about 18 hours. The second comprises 100 polyphonic pop songs of 30 seconds each for each of the 10 musical genres represented, for a total duration of about 8 hours.
 
-The \textit{medley-solos-DB} dataset is already split into "training", and "test" datasets, they are considered as is in this study. The \textit{gtzan} dataset is split in a train set and a test set using the following procedure. For each genre, the first 70 songs are put in the train set and the remaining 30 in the test set.
+The \textit{medley-solos-db} dataset is already split into "training", and "test" datasets, they are considered as is in this study. The \textit{gtzan} dataset is split in a train set and a test set using the following procedure. For each genre, the first 70 songs are put in the train set and the remaining 30 in the test set.
 
 For both datasets, the audio data is resampled to $8$kHz and converted to spectral data using a short-term Fourier transform with frame size of $256$ samples, hop size of $128$ samples and a Hann window. Extracts are further split into texture windows of $10$ frames processed as individual examples.
 
@@ -131,12 +131,7 @@ Additionally, two anchors are considered: the \textit{oracle} predictor that "pr
 \section{Experiments}
 \label{sec:experiments}
 
-The experiments reported here are conducted in order to study two main design issues for the task at hand:
-\begin{itemize}
-  \item the impact of the dilation on the other meta parameters;
-  \item the impact of the compression used in the design of autoencoders\ml{c'est mieux, sinon fais le :)}.
-\end{itemize}
-
+The experiments reported here are conducted in order to study two main design issues for the task at hand: 1) the impact of the dilation on the other meta parameters, and 2) the impact of the compression used in the design of autoencoders\ml{c'est mieux, sinon fais le :)}.
 
 \begin{figure*}[t]
 \center
@@ -167,7 +162,7 @@ Further increasing the dilation factor to $D=3$ is not beneficial, as the recept
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{llcc}
-$K$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-DB} \\
+$K$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-db} \\
 \hline
 13 & 1 & 0.109 $\pm$0.020 & 0.237 $\pm$0.014 \\
 17 & 1 & 0.105 $\pm$0.021 & 0.226 $\pm$0.016 \\
@@ -185,7 +180,7 @@ $K$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-DB} \\
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{llcc}
-$L$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-DB} \\
+$L$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-db} \\
 \hline
 5 & 1 & 0.110 $\pm$0.017 & 0.240 $\pm$0.013 \\
 6 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
@@ -229,7 +224,7 @@ Compared to the two encoder-decoder baselines, the proposed approach compares fa
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{lcc}
-method & \textit{gtzan} & \textit{medley-solos-DB} \\
+method & \textit{gtzan} & \textit{medley-solos-db} \\
 \hline
 proposed & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
 cnn-bottleneck & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
@@ -250,7 +245,7 @@ As can be seen on Table \ref{tab:ops}, the proposed approach improves over the b
 \begin{table}
   \begin{center}
 \begin{tabular}{lcc|cc}
-  & \multicolumn{2}{c}{\textit{medley-solos-DB}} & \multicolumn{2}{c}{\textit{gtzan}} \\
+  & \multicolumn{2}{c}{\textit{medley-solos-db}} & \multicolumn{2}{c}{\textit{gtzan}} \\
   method & mirror & oracle & mirror & oracle \\
 \hline
 null & 12.9 $\pm$3 & 12.9 $\pm$3 & 12.9 $\pm$3 &  12.9 $\pm$3\\
