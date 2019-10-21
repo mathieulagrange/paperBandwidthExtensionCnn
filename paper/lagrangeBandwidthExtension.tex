@@ -146,7 +146,7 @@ The experiments reported here are conducted in order to study two main design is
 &
   \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
 \end{tabular}
-\caption{Examples of predictions for (a) the solos dataset and (b) the \textit{gtzan} dataset. The proposed model handles correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
+\caption{Examples of predictions for (a) the \textit{medley-solos-db} dataset and (b) the \textit{gtzan} dataset. The proposed model handles correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
 \label{fig:spec}
 \end{figure*}
 
@@ -167,7 +167,7 @@ Further increasing the dilation factor to $D=3$ is not beneficial, as the recept
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{llcc}
-$K$ & dilation ($D$) & gtzan & medleysolos \\
+$K$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-DB} \\
 \hline
 13 & 1 & 0.109 $\pm$0.020 & 0.237 $\pm$0.014 \\
 17 & 1 & 0.105 $\pm$0.021 & 0.226 $\pm$0.016 \\
@@ -185,7 +185,7 @@ $K$ & dilation ($D$) & gtzan & medleysolos \\
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{llcc}
-$L$ & dilation ($D$) & gtzan & medleysolos \\
+$L$ & dilation ($D$) & \textit{gtzan} & \textit{medley-solos-DB} \\
 \hline
 5 & 1 & 0.110 $\pm$0.017 & 0.240 $\pm$0.013 \\
 6 & 1 & 0.107 $\pm$0.021 & 0.231 $\pm$0.016 \\
@@ -229,7 +229,7 @@ Compared to the two encoder-decoder baselines, the proposed approach compares fa
 \begin{table}[t]
   \begin{center}
 \begin{tabular}{lcc}
-method & gtzan & medleysolos \\
+method & \textit{gtzan} & \textit{medley-solos-DB} \\
 \hline
 proposed & 0.102 $\pm$0.022 & 0.225 $\pm$0.019 \\
 cnn-bottleneck & 0.107 $\pm$0.017 & 0.241 $\pm$0.011 \\
@@ -250,20 +250,20 @@ As can be seen on Table \ref{tab:ops}, the proposed approach improves over the b
 \begin{table}
   \begin{center}
 \begin{tabular}{lcc|cc}
-  & \multicolumn{2}{c}{medleysolos} & \multicolumn{2}{c}{gtzan} \\
+  & \multicolumn{2}{c}{\textit{medley-solos-DB}} & \multicolumn{2}{c}{\textit{gtzan}} \\
   method & mirror & oracle & mirror & oracle \\
 \hline
-null & 12.9 $\pm$3.1 & 12.9 $\pm$3.1 & 12.9 $\pm$3.3 &  12.9 $\pm$3.3\\
-replicate & 10.7 $\pm$2.9 & 11.6 $\pm$2.9 & 10.8 $\pm$3.3 & 13.3 $\pm$3.2\\
+null & 12.9 $\pm$3 & 12.9 $\pm$3 & 12.9 $\pm$3 &  12.9 $\pm$3\\
+replicate & 10.7 $\pm$3 & 11.6 $\pm$3 & 10.8 $\pm$3 & 13.3 $\pm$3\\
 \hline
-cnn-bottleneck & 10.6 $\pm$2.5 &  13.3 $\pm$2.8 & 11.1 $\pm$3.0 & 15.6 $\pm$3.2 \\
-cnn stride2 & 11.2 $\pm$2.6 & 13.9 $\pm$2.7 & 11.2 $\pm$2.8 & 15.6 $\pm$3.1 \\
+cnn-bottleneck & 10.6 $\pm$2 &  13.3 $\pm$3 & 11.1 $\pm$3 & 15.6 $\pm$3 \\
+cnn stride2 & 11.2 $\pm$3 & 13.9 $\pm$3 & 11.2 $\pm$3 & 15.6 $\pm$3 \\
 \hline
-proposed  & 11 $\pm$2.4 & 14.3 $\pm$2.6  & 11.3 $\pm$3.0 & 16.3 $\pm$3.3 \\
+proposed  & 11 $\pm$2 & 14.3 $\pm$3  & 11.3 $\pm$3 & 16.3 $\pm$3 \\
 \hline
-oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
+oracle & 10.5 $\pm$3 & $\infty$ & 10.5 $\pm$3 & $\infty$ \\
 \end{tabular}
-\caption{Srr achieved by the different methods on the \textit{medely-solosdb} and the \textit{gtzan} datasets using the \textit{mirror} and \textit{oracle} phase estimates.}
+\caption{Srr achieved by the different methods on the \textit{medley-solosdb} and the \textit{gtzan} datasets using the \textit{mirror} and \textit{oracle} phase estimates.}
 \label{tab:srr}
 \end{center}
 \vspace{-4mm}
@@ -291,7 +291,7 @@ oracle & 10.5 $\pm$3.1 & $\infty$ & 10.5 $\pm$3.3 & $\infty$ \\
 \begin{table}[t]
 \begin{center}
 \begin{tabular}{lcc}
-method & medleysolos & gtzan \\
+method & \textit{medley-solos-db} & \textit{gtzan} \\
 \hline
 null & $\pm$ & 13.0$\pm$1.9  \\
 replicate & 25.6$\pm$3.6 & 29.7$\pm$4.9 \\
