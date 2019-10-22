@@ -1,0 +1,20 @@
+  
+\begin{table} 
+\begin{center} 
+\ 
+ \setlength{\tabcolsep}{.16667em} 
+\begin{tabular}{lccc} 
+method & lossSpec & srr & ops \\ 
+\hline 
+dnn & 0.095 $\pm$0.101 & 11.285 $\pm$2.978 &  42.939 $\pm$5.667 \\ 
+autoDense & 0.102 $\pm$0.105 & 11.212 $\pm$2.954 &  40.618 $\pm$5.838 \\ 
+autoStride & 0.105 $\pm$0.111 & 11.224 $\pm$2.816 &  36.924 $\pm$5.700 \\ 
+replicate & 0.195 $\pm$0.183 & 10.841 $\pm$3.299 &  29.728 $\pm$4.940 \\ 
+null & 0.197 $\pm$0.189 & \textbf{\textcolor{red}{12.912 $\pm$3.261}} &  13.070 $\pm$1.904 \\ 
+oracle & \textbf{\textcolor{red}{0.000 $\pm$0.000}} & 10.509 $\pm$3.257 & \textbf{\textcolor{red}{78.431 $\pm$10.903}} \\ 
+\end{tabular} 
+\end{center} 
+\caption{dataset: gtzan, squeeze: 0, kernelSize: 17, nbLayers: 6, nbChannels: 64, epochs: 20, dilation: 2, estimatePhase: mirror, correlation: 0, logPlus: 0} 
+\label{dagtSq0Kesi17Nbla6Nbch64Ep20Di2EsphmiCo0Lopl0} 
+\end{table} 
+ 

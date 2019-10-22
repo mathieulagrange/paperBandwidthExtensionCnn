@@ -1,0 +1,20 @@
+  
+\begin{table} 
+\begin{center} 
+\ 
+ \setlength{\tabcolsep}{.16667em} 
+\begin{tabular}{lccc} 
+method & lossSpec & srr & ops \\ 
+\hline 
+dnn & 0.213 $\pm$0.147 & 10.987 $\pm$2.443 & 34.275 $\pm$3.234 \\ 
+autoDense & 0.245 $\pm$0.168 & 11.070 $\pm$2.522 & 31.723 $\pm$3.184 \\ 
+autoStride & 0.221 $\pm$0.154 & 11.426 $\pm$2.604 & 33.323 $\pm$2.717 \\ 
+replicate & 0.422 $\pm$0.264 & 10.703 $\pm$2.903 & 25.620 $\pm$3.599 \\ 
+null & 0.293 $\pm$0.197 & \textbf{\textcolor{red}{12.926 $\pm$3.111}} & 15.403 $\pm$2.852 \\ 
+oracle & \textbf{\textcolor{red}{0.000 $\pm$0.000}} & 10.497 $\pm$3.123 & \textbf{\textcolor{red}{75.260 $\pm$9.341}} \\ 
+\end{tabular} 
+\end{center} 
+\caption{dataset: medleysolos, squeeze: 0, kernelSize: 17, nbLayers: 6, nbChannels: 64, epochs: 20, dilation: 2, estimatePhase: mirror, correlation: 0, logPlus: 0} 
+\label{dameSq0Kesi17Nbla6Nbch64Ep20Di2EsphmiCo0Lopl0} 
+\end{table} 
+ 
