@@ -80,7 +80,7 @@ Some post processing steps can be undertaken to further improve the perceptual q
 
 Learning approaches, such as non-negative matrix factorization \cite{sun2013non}, and deep learning approaches \cite{miron2018high} have several benefits compared to algorithmic approaches discussed above. First, if the capacity of the model is sufficient to encode the many relationships between the lower and the higher part of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios, there is no need for side information. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality.
 
-To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets\footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication on the companion website where some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}. 
+To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets\footnote{Reproducible research statement: the experiments described in this paper rely on public data and the code used to produce the results will be made available upon publication on the companion website where some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}.
 
 Our main findings are that: 1) use of dilated convolutional filters lead to architectures that are less sensitive to the tuning of the other meta-parameter and reduce the complexity of the model while preserving a receptive field adapted to the task at hand, 2) compressive architectures like autoencoders do not perform favorably compared to a fully convolutional neural network without compression.
 
@@ -139,9 +139,9 @@ The experiments reported here are conducted in order to study two main design is
 \center
 \begin{tabular}{cc}
   (a) & (b) \\
-  \includegraphics[width = .95\columnwidth]{figures/solos_1141.png}
+  \includegraphics[width = .9\columnwidth]{figures/solos_1141.png}
 &
-  \includegraphics[width = .95\columnwidth]{figures/gtzan_1120.png}
+  \includegraphics[width = .9\columnwidth]{figures/gtzan_1120.png}
 \end{tabular}
 \caption{Examples of predictions for (a) the \textit{medley-solos-db} dataset and (b) the \textit{gtzan} dataset. The proposed model handles correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
 \label{fig:spec}
