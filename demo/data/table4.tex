@@ -3,18 +3,19 @@
 \begin{center} 
 \ 
  \setlength{\tabcolsep}{.16667em} 
-\begin{tabular}{lccc} 
-method & lossSpec & srr & ops \\ 
+\begin{tabular}{llccc} 
+method & estimatePhase & lossSpec & srr & ops \\ 
 \hline 
-dnn & 0.213 $\pm$0.147 & 10.987 $\pm$2.443 & 34.275 $\pm$3.234 \\ 
-autoDense & 0.245 $\pm$0.168 & 11.070 $\pm$2.522 & 31.723 $\pm$3.184 \\ 
-autoStride & 0.221 $\pm$0.154 & 11.426 $\pm$2.604 & 33.323 $\pm$2.717 \\ 
-replicate & 0.422 $\pm$0.264 & 10.703 $\pm$2.903 & 25.620 $\pm$3.599 \\ 
-null & 0.293 $\pm$0.197 & \textbf{\textcolor{red}{12.926 $\pm$3.111}} & 15.403 $\pm$2.852 \\ 
-oracle & \textbf{\textcolor{red}{0.000 $\pm$0.000}} & 10.497 $\pm$3.123 & \textbf{\textcolor{red}{75.260 $\pm$9.341}} \\ 
+dnn & mirror & 0.09 $\pm$0.10 & 11.28 $\pm$2.98 &  42.94 $\pm$5.67 \\ 
+autoDense & mirror & 0.10 $\pm$0.10 & 11.21 $\pm$2.95 &  40.62 $\pm$5.84 \\ 
+autoStride & mirror & 0.10 $\pm$0.11 & 11.22 $\pm$2.82 &  36.92 $\pm$5.70 \\ 
+replicate & mirror & 0.20 $\pm$0.18 & 10.84 $\pm$3.30 &  29.73 $\pm$4.94 \\ 
+null & mirror & 0.20 $\pm$0.19 & 12.91 $\pm$3.26 &  13.07 $\pm$1.90 \\ 
+oracle & mirror & \textbf{\textcolor{red}{0.00 $\pm$0.00}} & 10.51 $\pm$3.26 & \textbf{\textcolor{red}{78.43 $\pm$10.90}} \\ 
+oracle & oracle & \textbf{\textcolor{red}{0.00 $\pm$0.00}} & \textbf{\textcolor{red}{   Inf $\pm$-}} &    - $\pm$0.00 \\ 
 \end{tabular} 
 \end{center} 
-\caption{dataset: medleysolos, squeeze: 0, kernelSize: 17, nbLayers: 6, nbChannels: 64, epochs: 20, dilation: 2, estimatePhase: mirror, correlation: 0, logPlus: 0} 
-\label{dameSq0Kesi17Nbla6Nbch64Ep20Di2EsphmiCo0Lopl0} 
+\caption{dataset: gtzan, squeeze: 0, kernelSize: 17, nbLayers: 6, nbChannels: 64, epochs: 20, dilation: 2, correlation: 0, logPlus: 0} 
+\label{dagtSq0Kesi17Nbla6Nbch64Ep20Di2Co0Lopl0} 
 \end{table} 
  
