@@ -48,6 +48,9 @@
 %	Department C-D\\
 %	Address C-D}
 %
+
+\renewcommand{\baselinestretch}{.98}
+
 \begin{document}
 %\ninept
 %
@@ -57,7 +60,7 @@
 
 Bandwidth extension has a long history in audio processing. While speech processing tools do not rely on side information, production-ready bandwidth extension tools of general audio signals rely on side information that has to be transmitted alongside the bitstream of the low frequency part, mostly because polyphonic music has a more complex and less predictable spectral structure than speech.
 
-This paper studies the benefit of considering a dilated fully convolutional neural network to perform the bandwidth extension of musical audio signals with no side information on the magnitude spectra. Experimental evaluation using two public datasets, medley-solos-db and gtzan, respectively of monophonic and polyphonic music demonstrate that the proposed architecture achieves state of the art performance.
+This paper studies the benefit of considering a dilated fully convolutional neural network to perform the bandwidth extension of musical audio signals with no side information on the magnitude spectra. Experimental evaluation using two public datasets, \textit{medley-solos-db} and \textit{gtzan}, respectively of monophonic and polyphonic music demonstrate that the proposed architecture achieves state of the art performance.
 
 \end{abstract}
 %
@@ -80,7 +83,7 @@ Some post processing steps can be undertaken to further improve the perceptual q
 
 Learning approaches, such as non-negative matrix factorization \cite{sun2013non}, and deep learning approaches \cite{miron2018high} have several benefits compared to algorithmic approaches discussed above. First, there may be no need for side information if the capacity of the model is sufficient to encode the rich relationship between the lower frequencies and the higher frequencies of the spectrum and if those encoded relationships are generic enough to produce satisfying results for real use case scenarios. Secondly, the relationships encoded by the model being non explicit, there is less chance of reaching a "glass-ceiling" in terms of perceptual quality.
 
-To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets\footnote{The code is available at \url{https://github.com/mathieulagrange/paperBandwidthExtensionCnn} and some audio examples can be listened to: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}.
+To investigate further in this direction, we consider in this paper a deep convolutional network that operates in the magnitude spectrum. The model is described in Section \ref{sec:model}. Its performance is evaluated using an experimental protocol described in Section \ref{sec:protocol} on two public datasets: the \textit{medley-solos-db} and the \textit{gtzan} datasets\footnote{The code is available at \url{https://github.com/mathieulagrange/paperBandwidthExtensionCnn} and some audio examples can be listened to at \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.}. Outcomes of the performance analysis are described in Section \ref{sec:experiments} and discussed in Section \ref{sec:discussion}.
 
 Our main findings are that: 1) use of dilated convolutional filters lead to architectures that are less sensitive to the tuning of the other meta-parameter and reduce the complexity of the model while preserving a receptive field adapted to the task at hand, 2) compressive architectures like autoencoders do not perform favorably compared to a fully convolutional neural network without compression.
 
@@ -98,11 +101,13 @@ The architecture is a fully convolutional neural network \cite{long2015fully} wi
     \vspace{-2mm}
 \end{figure}
 
-The model is trained using the mean squared error (MSE) loss function of expression:
-\begin{equation}
-L(y, \hat y) = \frac{1}{N_b}\sum\limits_{n=1}^{N_b}\sum\limits_{t=1, f=1}^{T, F}(\hat y_n(t, f) - y_n(t, f))^2
-\end{equation}
-where $y_n(t, f)$ is the ground truth high frequency part of the spectrum, $\hat y_n(t, f)$ is the output of the model, $N_b$ is the batch size, ant $T$ and $F$ are the time and frequency dimensions of the output respectively. Optimization is performed using the Adam \cite{kingma2014adam} algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
+The model is trained using the mean squared error (MSE) loss function. Optimization is performed using the Adam \cite{kingma2014adam} algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
+
+% of expression:
+% \begin{equation}
+% L(y, \hat y) = \frac{1}{N_b}\sum\limits_{n=1}^{N_b}\sum\limits_{t=1, f=1}^{T, F}(\hat y_n(t, f) - y_n(t, f))^2
+% \end{equation}
+% where $y_n(t, f)$ is the ground truth high frequency part of the spectrum, $\hat y_n(t, f)$ is the output of the model, $N_b$ is the batch size, ant $T$ and $F$ are the time and frequency dimensions of the output respectively.
 
 Reverting to the time domain requires the estimation of the phase information for higher frequencies whose magnitude have been predicted. Several methods proposed in the literature are considered. For evaluation purposes, the phase can be the original phase, termed \textit{oracle} in the following, the low frequency phase as proposed in \cite{miron2018high} and a flipped version of the low frequency phase as proposed in \cite{li2015deep}, termed \textit{mirror} in the following. The latter gave consistently better results, so only the results achieved using this method are reported.
 
@@ -320,13 +325,9 @@ oracle  & 75.2$\pm$9.3 & 78.4$\pm$10.9  \\
 
 The benefit of considering a dilated fully convolutional neural network for the task of predicting the high frequency part of the magnitude spectra given the low frequency part has been studied. The proposed architecture has been thoroughly evaluated in terms of several metrics, from the optimized loss to an objective perceptual measure.
 
-Considering the Fourier spectrum as input has several drawbacks. Time/Frequency resolution tradeoffs and the necessity for phase estimation inherently limit the potential of the proposed approach. Future work will consider more advanced phase estimators and study the influence of mismatch between training and testing audio material. % The dependency to the training set on the behavior of the predictors will also be studied.\fg{Je ne comprends pas cette phrase}
+Considering the Fourier spectrum as input has several drawbacks. Time/Frequency resolution tradeoffs and the necessity for phase estimation inherently limit the potential of the proposed approach. Future work will consider more advanced phase estimators and study the influence of mismatch between training and testing audio material. 
 
-%We believe that considering the bandwidth extension task has several benefits for gaining knowledge on the behavior of deep neural architecture and seek to pursue this line of research.
-
-
-
-Alongside those technical issues, we also believe that considering this task with varied learning and testing sets, \textit{i.e.} predicting the high frequency spectra of a 'pop' song using network trained on 'country' songs may be of creative interest, to explore the yet to be defined notion of musical style transfer \cite{dai2018music}.
+We also believe that considering this task with varied learning and testing sets, \textit{i.e.} predicting the high frequency spectra of a 'pop' song using network trained on 'country' songs may be of creative interest, to explore the yet to be defined notion of musical style transfer \cite{dai2018music}.
 
 
 \vfill\pagebreak
