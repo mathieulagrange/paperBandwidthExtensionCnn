@@ -1,0 +1,167 @@
+
+---- Comments from the Reviewers: ----
+Importance/Relevance: Of broad interest
+
+Novelty/Originality: Minor originality
+Comment on Novelty/Originality:
+This paper uses a fully convolutional deepnet with dilation to perform bandwidth extension. The phase is replicated from the input mixture.
+Evaluation is done with some interesting, but unusual metrics, and there is no perceptual tests.
+
+Technical Correctness: Probably correct
+
+Experimental Validation: Lacking in some respect
+Comment on Experimental Validation:
+The authors did not proceed to any perceptual tests.
+The webpage provided does not really allow to listen to the results in a practical manner
+
+Clarity of Presentation: Clear enough
+
+Reference to Prior Work: References missing
+Comment on Reference to Prior Work:
+I think that many related references are missing, in particular all the recent work on "audio super-resolution".
+
+no space, and a bit out of topic
+
+You also do not mention recurrent models, that appear to have some success.
+
+We do
+
+General Comments to Authors:
+This paper proposes a bandwidth extension technique through CNN. The proposed approach is extremely simple, it stacks convolutive layers with RELU activations.
+I do think that the paper is a bit weak, but has some interesting features, like the use of some source separation metrics for evaluation.
+I think the paper is a bit borderline.
+Experiments are kind of insufficient, there is no perceptual evaluation, and the proposed architecture lacks novelty. The reconstruction of the phase seems some part that would be more interesting, at a time where the community is somehow moving towards end-to-end methods.
+
+Indeed
+
+Here are some comments:
+1.
+* "between the lower and higher part" parts
+
+rewritten
+
+* I don't thin that this very long "reproducible research statement" is required. Just provide the information.
+
+done
+
+* The website of the paper is really buggy, and not really understandable. There is one single audio player for several methods ? I would suggest you strongly improve the way the results are presented.
+
+Some explanations is provided to guide the user
+
+* The code is not there, and I guess I have to trust the authors concerning it being made available on publication.
+
+url now given
+
+2.
+* We don't know whether this "spectral domain" refers to some spectrogram of some sort, or the complex time-frequency domain ? Likewise for the cost function: are you computing MSE over complex ? magnitude ? power spectrograms ?
+
+resolved ambiguity
+
+* There is no point of explicitly writing all your sums over T and F while they don't appear inside the sum. Just mention you are using MSE
+
+completed equation
+
+* If you are using the complex STFT, all good, but then please explain how the complex info is encoded and how are the non-linearities actually implemented
+* If you are using some kind of magnitude spectrogram, please mention how you are doing synthesis, and in particular how you are recovering the phase.
+
+These points are totally *crucial* and should not be just rapidly mentioned in the evaluation section.
+
+Indeed, moved paragraph to the previous section
+
+3.
+* For gtzan, did you make sure that the same artist appears in both train and test ?
+* Setting up some quick listening test is not so difficult and could already provide some information with a few participants. Furthermore, you *do* invoke "informal listening tests" for justifying your method.
+
+quick listening test is what we meant by informal listening test. Though, no analysis can be performed using few participants.
+
+* OPS has not been designed for the purpose of evaluating bandwidth extension. You should prove that it is appropriate for that purpose, or refer to some study that does so. This idea is guenuinely interested, but definitely reads strange for someone that doesn't know about source separation.
+
+some justification is now provided.
+
+4. Experiments
+* figure 2 displays one single spectrum over the whole test set. I would have like at least the additional display of spectrograms. I don't thin you can really draw any conclusion from this single example.
+
+* At this point, you already justified the use of some other objective cost function. Maybe the splitting into "experimental protocol" and "experiments" is not really appropriate ?
+
+may be
+
+* Please mention "OPS" in the captions. using this "overall perceptual scores" can suggest to some readers that you actually did some listening tests.
+
+removed
+
+ OPS does not come with a unit ?
+
+I am not sure.
+
+-----
+Importance/Relevance: Of broad interest
+Comment on Importance/Relevance:
+This paper presents a bandwidth extension method based on a convolutive neural network with or without dilation. Besides the task itself, the paper includes interesting discussion and insights on comparing autoencoders with dense cnns that could apply in other tasks.
+
+Novelty/Originality: Moderately original
+Comment on Novelty/Originality:
+Original work.
+
+Technical Correctness: Definitely correct
+
+Experimental Validation: Sufficient validation/theoretical paper
+Comment on Experimental Validation:
+The proposed method is thoroughly evaluated, including effect of several parameters, on two different databases of large size. I appreciated the possibility to listen to audio examples on the companion website. My only regret is that no experiment is presented with training on the first database and testing on the second and vice versa (each set is divided internally into train and test, but no mismatch condition is presented.)
+
+That is an excellent suggestion for future work, thank you. Added in the conclusion.
+
+Clarity of Presentation: Difficult to read
+Comment on Clarity of Presentation:
+The authors have chosen to use only one level of sectioning. Subsections would be needed at least in the (long) section 3 to make it more straightforward. Also, the writing assumes expertise in deep neural networks from the reader; it could be more accessible to non-experts, and more self-contained (with, for instance, a brief reminder on what dilated convolutions are - this is not yet common knowledge, in my opinion.)
+
+explanation from a signal processing standpoint is given.
+
+Reference to Prior Work: Excellent references
+Comment on Reference to Prior Work:
+Presentation of prior work on bandwidth extension in the introduction is very good. Adequate references are provided for all aspects that could not be detailed in the paper, which happily compensates for the lack of details here and there.
+
+General Comments to Authors:
+Interesting paper with good experimental work and nice discussions (on dilation, phase and its impact on evaluation criteria, interpretability...)
+
+Please add the native sampling frequency! (only the cutoff for degraded versions is written.) Especially as they are different in the 2 data sets (gtzan is @22.05k and medley solo @44.1k)
+
+it is provided.
+
+-----
+Importance/Relevance: Of sufficient interest
+
+Novelty/Originality: Moderately original
+
+Technical Correctness: Probably correct
+
+Experimental Validation: Sufficient validation/theoretical paper
+
+Clarity of Presentation: Very clear
+
+Reference to Prior Work: Excellent references
+
+General Comments to Authors:
+This paper describes a system for predicting high frequency magnitude spectra from low-frequency magnitude spectra for the purposes of performing bandwidth extension for musical signals. It utilizes a convolutional architecture for the predictions and then combines it with a heuristic phase. System outputs are evaluated using two objective metrics: signal to reconstruction ratio (SRR) and overall perceptual score (OPS) from the PEASS toolkit. The SRR results are inconclusive, but informal listening tests show them to be poorly correlated with subjective results. OPS results show the proposed system works as well as several baselines, and presumably agree more with subjective results.
+
+Overall, the proposed approach seems reasonable, although with recent results such as those of Gupta et al [5] showing that speech bandwidth expansion is possible using a WaveNet model that only takes as input the low frequency spectra, the proposed approach, which uses heuristic high-frequency phase, seems rather cautious. How would that approach perform on this problem?
+
+probaly good, but it remains very computationally intensive, thus usuitable for many application scenarios.
+
+The results here show that the proposed approach is slightly (but seemingly not significantly) better than several alternatives. More formal listening tests would help distinguish between the systems. Examples are published online, and listening to them the proposed system does seem to provide slightly better predictions than the various baselines.
+
+Minor comments:
+- Please use all-caps acronyms, even if the words defining them are not capitalized when they are introduced (e.g., signal-to-reconstruction ratio (SRR)).
+
+done
+
+- Please define "texture windows" on page 2
+
+It should be more explicit now.
+
+- On page 3: "The other parameters that controls" should be "The other parameters that control"
+
+fixed
+
+- On page 4: "perceptively" should be "perceptually"
+
+fixed
