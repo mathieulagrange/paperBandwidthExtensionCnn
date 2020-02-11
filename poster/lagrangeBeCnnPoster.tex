@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[a0,portrait,15pt]{a0poster}
+\documentclass[a0,portrait,20pt]{a0poster}
 
 \usepackage{multicol} % This is so we can have multiple columns of text side-by-side
 \columnsep=100pt % This is the amount of white space between the columns in the poster
@@ -44,6 +44,26 @@
 \usepackage{tikz,pgf}
 \usetikzlibrary{arrows,positioning}
 
+\usepackage[doi=false,
+            isbn=false,
+            url=false,
+            bibstyle=authoryear,
+            backend=bibtex,
+            style=authoryear]{biblatex} %, backend=bibtex
+\AtEveryCitekey{%\clearfield{title}
+    \scriptsize
+    \clearfield{note}
+    \clearfield{pages}
+    \clearfield{volume}%
+    \clearfield{number}
+    \clearlist{location}
+    \clearlist{publisher}
+    \clearname{editor}}
+\renewcommand*{\multicitedelim}{\\}
+\def\bibfont{\Large}
+
+\addbibresource{bib.bib}
+
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -64,7 +84,7 @@
 \end{minipage}
 %
 \begin{minipage}[b]{0.25\linewidth}
-\includegraphics[width=20cm]{figures/logoLs2n.jpg}\\
+\includegraphics[width=14cm]{figures/logoLs2n.jpg}\\
 \end{minipage}
 
 \vspace{1cm} % A bit of extra whitespace between the header and poster content
@@ -94,10 +114,15 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 \color{SaddleBrown} % SaddleBrown color for the introduction
 
 \section*{Background}
-\nocite{*} % Print all references regardless of whether they were cited in the poster or not
-\bibliographystyle{plain} % Plain referencing style
-\bibliography{bib} % Use the example bibliography file sample.bib
 
+\fullcite{dietz2002spectral}
+
+% \begingroup
+% \renewcommand{\section}[2]{}%
+% \nocite{*} % Print all references regardless of whether they were cited in the poster or not
+% \bibliographystyle{unsrt} % Plain referencing style
+% \bibliography{bib} % Use the example bibliography file sample.bib
+% \endgroup
 
 %----------------------------------------------------------------------------------------
 %	OBJECTIVES
@@ -143,8 +168,7 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 \section*{Acknowledgements}
 
 
-The authors would like to acknowledge support for this project
-from ANR project Houle (grant ANR-11-JS03-005-01) and ANR project Cense (grant ANR-16-CE22-0012).
+The authors would like to acknowledge partial support from ANR project Cense (grant ANR-16-CE22-0012).
 
 %----------------------------------------------------------------------------------------
 
