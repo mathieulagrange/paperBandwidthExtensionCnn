@@ -44,25 +44,26 @@
 \usepackage{tikz,pgf}
 \usetikzlibrary{arrows,positioning}
 
-\usepackage[doi=false,
-            isbn=false,
-            url=false,
-            bibstyle=authoryear,
-            backend=bibtex,
-            style=authoryear]{biblatex} %, backend=bibtex
-\AtEveryCitekey{%\clearfield{title}
-    \scriptsize
-    \clearfield{note}
-    \clearfield{pages}
-    \clearfield{volume}%
-    \clearfield{number}
-    \clearlist{location}
-    \clearlist{publisher}
-    \clearname{editor}}
-\renewcommand*{\multicitedelim}{\\}
-\def\bibfont{\Large}
-
-\addbibresource{bib.bib}
+% \usepackage[doi=false,
+%             isbn=false,
+%             url=false,
+%             bibstyle=authoryear,
+%             backend=biber,
+%             style=authoryear]{biblatex} %, backend=bibtex
+% \AtEveryCitekey{%\clearfield{title}
+%     \scriptsize
+%     \clearfield{note}
+%     \clearfield{pages}
+%     \clearfield{volume}%
+%     \clearfield{number}
+%     \clearlist{location}
+%     \clearlist{publisher}
+%     \clearname{editor}}
+% \renewcommand*{\multicitedelim}{\\}
+% \def\bibfont{\Large}
+% \renewcommand*{\bibfont}{\huge}
+%
+% \addbibresource{bib.bib}
 
 \begin{document}
 
@@ -115,7 +116,71 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 
 \section*{Background}
 
-\fullcite{dietz2002spectral}
+\begin{itemize}
+  \item \textbf{Spectral band replication (SBR)$^*$}: M. Dietz, L. Liljeryd, K. Kjorling, and O. Kunz. "Spectral band replication, a novel approach in audio coding". In {\em Audio Engineering Society Convention}, 2002.
+  \item \textbf{Non-negative matrix completion (NMC)}: D. Sun and R. Mazumder. Non-negative matrix completion for bandwidth extension: A convex optimization approach. In {\em 2013 IEEE International Workshop on Machine Learning for Signal Processing (MLSP)}, 2013.
+  \item \textbf{Autoencoders$^*$}: M.~Miron and M.~E.~P. Davies. High frequency magnitude spectrogram reconstruction for music
+    mixtures using convolutional autoencoders. In {\em In Proc. of the 21st Int. Conference on Digital Audio Effects
+    (DAFx-18)}, 2018.
+  \item \textbf{Sample based}: A. Gupta, B. Shillingford, Y. Assael, and T. Walters. Speech bandwidth extension with wavenet, 2019.
+\end{itemize}
+$^*$ will be considered as \textbf{baselines}.
+
+TODO put SBR image
+
+\color{DarkSlateGray}
+
+\section*{Model}
+
+\begin{center}\vspace{1cm}
+\includegraphics[width=.6\linewidth]{mdl}
+\captionof{figure}{ \color{RoyalBlue} Proposed deep convolutional neural network architecture for bandwidth extension.}
+\end{center}\vspace{1cm}
+
+The architecture is a fully convolutional neural network with the following design :
+\begin{enumerate}
+  \item $L$ layers followed by rectified linear units (ReLU) activations
+  \item The number of output convolution channels $C$ is the same for all hidden layers
+   \item Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively
+   \item padding by replicating their boundary values depending on the kernel size
+   \item a fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network
+\end{enumerate}
+
+The model is trained using the mean squared error (MSE) loss function. Optimization is performed using the Adam algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
+
+
+\subsection*{A note on dilation}
+
+From a signal processing standpoint, this procedure is equivalent to applying the convolution on a down-sampled version of the input. . As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+
+TODO put image
+
+
+\section*{Experimental protocol}
+\label{sec:protocol}
+
+\subsection*{Datasets}
+
+\begin{enumerate}
+  \item \textit{medley-solos-db}: 18 hours, monophonic
+  \item \textit{gtzan}: 8 hours, polyphonic
+\end{enumerate}
+
+\subsection*{Pre-processing}
+
+\begin{enumerate}
+  \item resampling to $8$kHz
+  \item short-term Fourier transform with frame size of $256$ samples, hop size of $128$ samples and a Hann window.
+  \item "textures" of $10$ frames, processed as individual examples.
+\end{enumerate}
+
+
+
+
+% {\huge \fullcite{dietz2002spectral}}
+% \fullcite{sun2013non}
+% \fullcite{miron2018high}
+% \fullcite{gupta2019speech}
 
 % \begingroup
 % \renewcommand{\section}[2]{}%
@@ -127,7 +192,7 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 %----------------------------------------------------------------------------------------
 %	OBJECTIVES
 %----------------------------------------------------------------------------------------
-\color{DarkSlateGray}
+
 
 
 \color{SaddleBrown}
