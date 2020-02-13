@@ -116,6 +116,11 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 
 \section*{Background}
 
+\begin{center}\vspace{1cm}
+\includegraphics[width=.6\linewidth]{sbr}
+\captionof{figure}{ \color{RoyalBlue} Dilation can be viewed as a convolution on a downsampled version of the input (fig from \cite{dietz2002spectral}).}
+\end{center}\vspace{1cm}
+
 \begin{itemize}
   \item \textbf{Spectral band replication (SBR)$^*$}: M. Dietz, L. Liljeryd, K. Kjorling, and O. Kunz. "Spectral band replication, a novel approach in audio coding". In {\em Audio Engineering Society Convention}, 2002.
   \item \textbf{Non-negative matrix completion (NMC)}: D. Sun and R. Mazumder. Non-negative matrix completion for bandwidth extension: A convex optimization approach. In {\em 2013 IEEE International Workshop on Machine Learning for Signal Processing (MLSP)}, 2013.
@@ -126,18 +131,14 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 \end{itemize}
 $^*$ will be considered as \textbf{baselines}.
 
-TODO put SBR image
+
 
 \color{DarkSlateGray}
 
 \section*{Model}
-
-\begin{center}\vspace{1cm}
-\includegraphics[width=.6\linewidth]{mdl}
-\captionof{figure}{ \color{RoyalBlue} Proposed deep convolutional neural network architecture for bandwidth extension.}
-\end{center}\vspace{1cm}
-
 The architecture is a fully convolutional neural network with the following design :
+
+\begin{minipage}[c]{.5\linewidth}
 \begin{enumerate}
   \item $L$ layers followed by rectified linear units (ReLU) activations
   \item The number of output convolution channels $C$ is the same for all hidden layers
@@ -145,15 +146,77 @@ The architecture is a fully convolutional neural network with the following desi
    \item padding by replicating their boundary values depending on the kernel size
    \item a fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network
 \end{enumerate}
+\end{minipage}
+\begin{minipage}[c]{.5\linewidth}
+  \hspace{2cm}\begin{center}\vspace{1cm}
+  \includegraphics[width=.9\linewidth]{mdl}
+  \captionof{figure}{ \color{RoyalBlue} Proposed deep convolutional neural network architecture for bandwidth extension.}
+  \end{center}\vspace{1cm}
+\end{minipage}
 
 The model is trained using the mean squared error (MSE) loss function. Optimization is performed using the Adam algorithm with minibatches of $64$ examples and a learning rate of $0.001$.
 
-
 \subsection*{A note on dilation}
 
+\begin{minipage}[c]{.4\linewidth}
 From a signal processing standpoint, this procedure is equivalent to applying the convolution on a down-sampled version of the input. . As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+\end{minipage}
+\begin{minipage}[c]{.55\linewidth}
+\begin{center}\vspace{1cm}
+\includegraphics[width=.8\linewidth]{dilation2}
+\captionof{figure}{ \color{RoyalBlue} Dilation can be viewed as a convolution on a downsampled version of the input (fig from \cite{tan2018gated}).}
+\end{center}\vspace{1cm}
+\end{minipage}
 
-TODO put image
+\section*{Experiments}
+
+\begin{center}\vspace{1cm}
+\begin{tabular}{cc}
+  (a) & (b) \\
+  \includegraphics[width = .45\columnwidth]{solos_1141.png}
+&
+  \includegraphics[width = .45\columnwidth]{gtzan_1120.png}
+\end{tabular}
+\captionof{figure}{ \color{RoyalBlue} Examples of predictions for (a) the \textit{medley-solos-db} dataset and (b) the \textit{gtzan} dataset. The proposed model handles correctly the harmonic structures (a) and the average magnitude of more complex spectral shapes (b).}
+\end{center}\vspace{1cm}
+
+\begin{minipage}[c]{.55\linewidth}
+  \begin{center}
+\begin{tabular}{lcc|cc}
+  & \multicolumn{2}{c|}{\textit{medley-solos-db}} & \multicolumn{2}{c}{\textit{gtzan}} \\
+  method & mirror & oracle & mirror & oracle \\
+\hline
+null & \textbf{12.9 $\pm$3} & 12.9 $\pm$3 & \textbf{12.9 $\pm$3} &  12.9 $\pm$3\\
+replicate & 10.7 $\pm$3 & 11.6 $\pm$3 & 10.8 $\pm$3 & 13.3 $\pm$3\\
+\hline
+cnn bottleneck & 10.6 $\pm$2 &  13.3 $\pm$3 & 11.1 $\pm$3 & 15.6 $\pm$3 \\
+cnn stride2 & 11.2 $\pm$3 & 13.9 $\pm$3 & 11.2 $\pm$3 & 15.6 $\pm$3 \\
+\hline
+proposed  & 11.0 $\pm$2 & 14.3 $\pm$3  & 11.3 $\pm$3 & 16.3 $\pm$3 \\
+\hline
+oracle & 10.5 $\pm$3 & $\infty$ & 10.5 $\pm$3 & $\infty$ \\
+\end{tabular}
+\captionof{figure}{ \color{RoyalBlue} SRR achieved by the different methods on the \textit{medley-solosdb} and the \textit{gtzan} datasets using the \textit{mirror} and \textit{oracle} phase estimates.}
+\end{center}
+\end{minipage}
+\begin{minipage}[c]{.4\linewidth}
+\begin{center}
+\begin{tabular}{lcc}
+method & \textit{medley-solos-db} & \textit{gtzan} \\
+\hline
+null & 15.4$\pm$2.9 & 13.0$\pm$1.9  \\
+replicate & 25.6$\pm$3.6 & 29.7$\pm$4.9 \\
+\hline
+cnn bottleneck & 31.7 $\pm$3.2 & 40.6 $\pm$5.8 \\
+cnn stride2 & 33.3 $\pm$2.7 & 36.9 $\pm$ 5.7 \\
+\hline
+proposed & \textbf{34.2 $\pm$3.2} & \textbf{42.9 $\pm$5.7} \\
+\hline
+oracle  & 75.2$\pm$9.3 & 78.4$\pm$10.9  \\
+\end{tabular}
+\captionof{figure}{ \color{RoyalBlue} OPS using the mirror phase estimate.}
+\end{center}
+\end{minipage}
 
 
 \section*{Experimental protocol}
@@ -174,66 +237,50 @@ TODO put image
   \item "textures" of $10$ frames, processed as individual examples.
 \end{enumerate}
 
+\subsection*{Metrics}
 
+Three metrics are considered:
+\begin{enumerate}
+  \item \textbf{Spectral loss} : the loss used to optimize the network
+  \item \textbf{SRR} : signal to reconstruction ratio computed in the time domain
+  \item \textbf{OPS} : overall perceptual score from the PEASS toolkit \cite{emiya2011subjective}
+\end{enumerate}
 
+\subsection*{Anchors and baselines}
 
-% {\huge \fullcite{dietz2002spectral}}
-% \fullcite{sun2013non}
-% \fullcite{miron2018high}
-% \fullcite{gupta2019speech}
+Two anchors are considered:
+\begin{enumerate}
+  \item \textit{oracle}: the predicted magnitude in the high frequencies are the actual ones
+  \item \textit{null}: the predicted magnitude in the high frequencies are set to zero
+\end{enumerate}
 
-% \begingroup
-% \renewcommand{\section}[2]{}%
-% \nocite{*} % Print all references regardless of whether they were cited in the poster or not
-% \bibliographystyle{unsrt} % Plain referencing style
-% \bibliography{bib} % Use the example bibliography file sample.bib
-% \endgroup
-
-%----------------------------------------------------------------------------------------
-%	OBJECTIVES
-%----------------------------------------------------------------------------------------
-
-
-
-\color{SaddleBrown}
-
-
-\color{DarkSlateGray} % DarkSlateGray color for the rest of the
-
-\section*{}
-
-
-\section*{Results}
-
-
+Three baselines are considered:
+\begin{enumerate}
+  \item \textit{sbr}: crude implementation of the SBR technique
+  \item \textit{cnn bottleneck}: reimplementation of architecture proposed in \cite{miron2018high}
+  \item \textit{cnn stride2}: reimplementation of architecture proposed in \cite{miron2018high}
+\end{enumerate}
 
 \color{SaddleBrown} % SaddleBrown color for the conclusions to make them stand out
 
-\section*{Conclusions}
-
-
-
-\color{DarkSlateGray} % Set the color back to DarkSlateGray for the rest of the content
-
-%----------------------------------------------------------------------------------------
-%	FORTHCOMING RESEARCH
-%----------------------------------------------------------------------------------------
-
 \section*{Forthcoming Research}
 
- %----------------------------------------------------------------------------------------
-%	REFERENCES
-%----------------------------------------------------------------------------------------
+\begin{enumerate}
+  \item \textbf{advanced phase estimators}
+  \item \textbf{mismatch between training and testing audio material}
+  \item \textbf{creative use} : predicting the high frequency spectra of a 'pop' song using network trained on 'country' songs may be of creative interest, to explore the yet to be defined notion of \textbf{musical style transfer}.
+\end{enumerate}
 
 
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGEMENTS
-%----------------------------------------------------------------------------------------
+\color{DarkSlateGray}
 
 \section*{Acknowledgements}
 
 
 The authors would like to acknowledge partial support from ANR project Cense (grant ANR-16-CE22-0012).
+
+\bibliographystyle{../paper/IEEEbib} % Plain referencing style
+\bibliography{bib}
 
 %----------------------------------------------------------------------------------------
 
