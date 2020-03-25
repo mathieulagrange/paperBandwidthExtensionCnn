@@ -118,7 +118,7 @@ This paper studies the benefit of considering \textbf{a dilated fully convolutio
 
 \begin{center}\vspace{1cm}
 \includegraphics[width=.6\linewidth]{sbr}
-\captionof{figure}{ \color{RoyalBlue} Dilation can be viewed as a convolution on a downsampled version of the input (fig from \cite{dietz2002spectral}).}
+\captionof{figure}{ \color{RoyalBlue} Principle of Bandwidth Extension (fig from \cite{dietz2002spectral}).}
 \end{center}\vspace{1cm}
 
 \begin{itemize}
@@ -159,7 +159,7 @@ The model is trained using the mean squared error (MSE) loss function. Optimizat
 \subsection*{A note on dilation}
 
 \begin{minipage}[c]{.4\linewidth}
-From a signal processing standpoint, this procedure is equivalent to applying the convolution on a down-sampled version of the input. . As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
+From a signal processing standpoint, this procedure is equivalent to applying the convolution on a down-sampled version of the input. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
 \end{minipage}
 \begin{minipage}[c]{.55\linewidth}
 \begin{center}\vspace{1cm}
