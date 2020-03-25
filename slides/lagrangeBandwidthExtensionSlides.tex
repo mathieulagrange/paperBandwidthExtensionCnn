@@ -144,17 +144,17 @@ point/.style={circle,fill=black,minimum size=2pt},
 line/.style ={draw, thick, -latex',shorten
   >=2pt}]
 
-  % \AtBeginSection[]{
-  %   \begin{frame}
-  %   \vfill
-  %   \centering
-  %   \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-  %     \huge \bf
-  %     \secname\par%
-  %   \end{beamercolorbox}
-  %   \vfill
-  %   \end{frame}
-  % }
+  \AtBeginSection[]{
+    \begin{frame}
+    \vfill
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+      \huge \bf
+      \secname\par%
+    \end{beamercolorbox}
+    \vfill
+    \end{frame}
+  }
 
 % Update itemize to have a default overlay
 %\renewcommand{\itemize}[1][<+(1)->]{\olditemize[#1]}
@@ -188,10 +188,9 @@ Principle of Bandwidth Extension (fig from \footfullcitenomarkleft{dietz2002spec
 \begin{frame}{Previous work}
   \begin{itemize}
     \item \textbf{Spectral band replication (SBR)$^*$}: M. Dietz, L. Liljeryd, K. Kjorling, and O. Kunz. "Spectral band replication, a novel approach in audio coding". In {\em Audio Engineering Society Convention}, 2002.
-    \item \textbf{Non-negative matrix completion (NMC)}: D. Sun and R. Mazumder. Non-negative matrix completion for bandwidth extension: A convex optimization approach. In {\em 2013 IEEE International Workshop on Machine Learning for Signal Processing (MLSP)}, 2013.
+    \item \textbf{Non-negative matrix completion (NMC)}: D. Sun and R. Mazumder. Non-negative matrix completion for bandwidth extension: A convex optimization approach. MLSP, 2013.
     \item \textbf{Autoencoders$^*$}: M.~Miron and M.~E.~P. Davies. High frequency magnitude spectrogram reconstruction for music
-      mixtures using convolutional autoencoders. In {\em In Proc. of the 21st Int. Conference on Digital Audio Effects
-      (DAFx-18)}, 2018.
+      mixtures using convolutional autoencoders. DAFx, 2018.
     \item \textbf{Sample based}: A. Gupta, B. Shillingford, Y. Assael, and T. Walters. Speech bandwidth extension with wavenet, 2019.
   \end{itemize}
   $^*$ will be considered as \textbf{baselines}.
@@ -212,47 +211,46 @@ Principle of Bandwidth Extension (fig from \footfullcitenomarkleft{dietz2002spec
 \end{frame}
 
 \begin{frame}{Proposed model}
-  \begin{minipage}[c]{.5\linewidth}
-  \begin{enumerate}
+  \only<1>{\begin{enumerate}
     \item $L$ layers followed by rectified linear units (ReLU) activations
     \item The number of output convolution channels $C$ is the same for all hidden layers
      \item Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively
      \item padding by replicating their boundary values depending on the kernel size
      \item a fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network
-  \end{enumerate}
-  \end{minipage}
-  \begin{minipage}[c]{.5\linewidth}
-    \hspace{2cm}\begin{center}
-
+  \end{enumerate}}
+\only<2>{
+ \begin{center}
     \includegraphics[width=.9\linewidth]{mdl}
 
 Proposed deep convolutional neural network architecture for bandwidth extension.
 \end{center}
-  \end{minipage}
+}
 \end{frame}
 
 \begin{frame}{A word on dilation}
-  \begin{minipage}[c]{.4\linewidth}
-  From a signal processing standpoint, this procedure is equivalent to applying the convolution on a down-sampled version of the input. As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins compared to $K-1$ without dilation.
-  \end{minipage}
-  \begin{minipage}[c]{.55\linewidth}
-  \begin{center}\vspace{1cm}
+  \only<2>{
+  From a signal processing standpoint,
+  \begin{itemize}
+    \item this procedure is equivalent to applying the convolution on a down-sampled version of the input.
+    \item As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins
+    \item compared to $K-1$ without dilation.
+  \end{itemize}
+}
+\only<1>{
+  \begin{center}
 %  \includegraphics[width=.8\linewidth]{dilation2}
 dilation2
 Dilation can be viewed as a convolution on a downsampled version of the input (fig from \footfullcitenomarkleft{tan2018gated}).
-  \end{center}\vspace{1cm}
-  \end{minipage}
+  \end{center}}
 \end{frame}
 
 \section{Experimental protocol}
 
 \begin{frame}{Datasets}
-
 \begin{enumerate}
   \item \textit{medley-solos-db}: 18 hours, monophonic
   \item \textit{gtzan}: 8 hours, polyphonic
 \end{enumerate}
-
 Pre-processing:
 
 \begin{enumerate}
@@ -292,18 +290,28 @@ Three baselines are considered:
 \begin{frame}{Inspection of predicted high frequencies}
   \centering
 \only<1>{
-    \includegraphics[width = .9\columnwidth]{solos_1141.png}
+    \includegraphics[width = .9\columnwidth]{solos_1141Legend.png}
 
-    Examples of predictions for the \textit{medley-solos-db} dataset. The proposed model handles correctly the harmonic structures.
+  The proposed model handles correctly the harmonic structures (\textit{medley-solos-db} dataset).
   }
   \only<2>{
+      \includegraphics[width = .9\columnwidth]{solos_1141Zoom.png}
+
+    The proposed model handles correctly the harmonic structures (\textit{medley-solos-db} dataset).
+    }
+  \only<3>{
     \includegraphics[width = .9\columnwidth]{gtzan_1120.png}
 
-    Examples of predictions for the \textit{gtzan} dataset. The proposed model handles correctly the average magnitude of complex spectral shapes.
+    The proposed model handles correctly the average magnitude of complex spectral shapes (\textit{gtzan} dataset).
     }
+    \only<4>{
+      \includegraphics[width = .9\columnwidth]{gtzan_1120Zoom.png}
+
+      The proposed model handles correctly the average magnitude of complex spectral shapes (\textit{gtzan} dataset).
+      }
 \end{frame}
 
-\begin{frame}{Impact of dilation}
+\begin{frame}{Impact of dilation on the spectral loss}
   \begin{center}
 \begin{tabular}{llcc}
 $L$ & dilation ($D$) & \textit{medley-solos-db} & \textit{gtzan} \\
@@ -323,7 +331,19 @@ Spectral loss on the testing set for the proposed architecture with $K=17$ and $
   \end{center}
 \end{frame}
 
-\begin{frame}{Perceptually motivated objective performance ($PSM_t$)}
+\begin{frame}{Prediction performance in terms of spectral loss}
+  \begin{center}
+\begin{tabular}{lcc}
+method & \textit{medley-solos-db} & \textit{gtzan} \\
+\hline
+proposed & 0.225 $\pm$0.019 & 0.102 $\pm$0.022 \\
+cnn bottleneck & 0.241 $\pm$0.011 & 0.107 $\pm$0.017 \\
+cnn stride2 & 0.228 $\pm$0.013 & 0.110 $\pm$0.017 \\
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Perceptually motivated objective performance ($PSM_t$) using the mirror phase estimate}
   \begin{center}
   \begin{tabular}{lcc}
   method & \textit{medley-solos-db} & \textit{gtzan} \\
@@ -338,8 +358,6 @@ Spectral loss on the testing set for the proposed architecture with $K=17$ and $
   \hline
   oracle & 97.2 $\pm$0.3 & 97.2 $\pm$0.6 \\
 \end{tabular}
-
-  $PSM_t$ in \% using the mirror phase estimate.
   \end{center}
 \end{frame}
 
