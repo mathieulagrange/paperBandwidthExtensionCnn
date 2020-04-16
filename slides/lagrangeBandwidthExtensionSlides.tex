@@ -120,8 +120,7 @@
 \institute[]
 {
 LS2N, CNRS, Centrale Nantes \\
-\includegraphics[height=1.5cm]{logoCnrs}
-}
+\includegraphics[height=1.6cm]{logoIcassp}}
 
 \date[]{31 Mars 2020}
 
@@ -144,17 +143,17 @@ point/.style={circle,fill=black,minimum size=2pt},
 line/.style ={draw, thick, -latex',shorten
   >=2pt}]
 
-  \AtBeginSection[]{
-    \begin{frame}
-    \vfill
-    \centering
-    \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-      \huge \bf
-      \secname\par%
-    \end{beamercolorbox}
-    \vfill
-    \end{frame}
-  }
+  % \AtBeginSection[]{
+  %   \begin{frame}
+  %   \vfill
+  %   \centering
+  %   \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+  %     \huge \bf
+  %     \secname\par%
+  %   \end{beamercolorbox}
+  %   \vfill
+  %   \end{frame}
+  % }
 
 % Update itemize to have a default overlay
 %\renewcommand{\itemize}[1][<+(1)->]{\olditemize[#1]}
@@ -167,6 +166,9 @@ line/.style ={draw, thick, -latex',shorten
 % show section lists
 %\begin{frame}{Agenda} \tableofcontents \end{frame} % [pausesections]
 
+
+\section{Background}
+
 \begin{frame}{Introduction}
 \only<1>{
   Bandwidth extension is the process of generating lost high frequencies of an audio signal given some prior knowledge which can be :
@@ -175,17 +177,14 @@ line/.style ={draw, thick, -latex',shorten
     \item some side information computed using knowledge of the high frequency content
     \item some generic knowledge of the spectral properties of the high frequencies. This knowledge can be encoded by experts or \structure{computationally learned}.
   \end{itemize}}
-\only<2>{%\centering \includegraphics[width=.9\linewidth]{sbr}
-sbr\\
-Principle of Bandwidth Extension (fig from \footfullcitenomarkleft{dietz2002spectral}).}
 \end{frame}
 
 
 
 
-\section{Background}
 
 \begin{frame}{Previous work}
+  \only<1>{
   \begin{itemize}
     \item \textbf{Spectral band replication (SBR)$^*$}: M. Dietz, L. Liljeryd, K. Kjorling, and O. Kunz. "Spectral band replication, a novel approach in audio coding". In {\em Audio Engineering Society Convention}, 2002.
     \item \textbf{Non-negative matrix completion (NMC)}: D. Sun and R. Mazumder. Non-negative matrix completion for bandwidth extension: A convex optimization approach. MLSP, 2013.
@@ -193,7 +192,10 @@ Principle of Bandwidth Extension (fig from \footfullcitenomarkleft{dietz2002spec
       mixtures using convolutional autoencoders. DAFx, 2018.
     \item \textbf{Sample based}: A. Gupta, B. Shillingford, Y. Assael, and T. Walters. Speech bandwidth extension with wavenet, 2019.
   \end{itemize}
-  $^*$ will be considered as \textbf{baselines}.
+  $^*$ will be considered as \textbf{baselines}.}
+  \only<2>{\centering \includegraphics[width=.9\linewidth]{sbr}
+  sbr\\
+  Principle of Spectral Band Replication Bandwidth Extension \footfullcitenomarkleft{dietz2002spectral}}
 \end{frame}
 
 
@@ -211,14 +213,14 @@ Principle of Bandwidth Extension (fig from \footfullcitenomarkleft{dietz2002spec
 \end{frame}
 
 \begin{frame}{Proposed model}
-  \only<1>{\begin{enumerate}
-    \item $L$ layers followed by rectified linear units (ReLU) activations
-    \item The number of output convolution channels $C$ is the same for all hidden layers
-     \item Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively
-     \item padding by replicating their boundary values depending on the kernel size
-     \item a fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network
-  \end{enumerate}}
-\only<2>{
+  % \only<1>{\begin{enumerate}
+  %   \item $L$ layers followed by rectified linear units (ReLU) activations
+  %   \item The number of output convolution channels $C$ is the same for all hidden layers
+  %    \item Convolution kernels also share the same size $(K_t, K_f)$ in the time and frequency dimensions respectively
+  %    \item padding by replicating their boundary values depending on the kernel size
+  %    \item a fixed dilation ratio $D$ is used in the frequency dimension for hidden layers, and no dilation is used in the input and output layers of the network
+  % \end{enumerate}}
+\only<1>{
  \begin{center}
     \includegraphics[width=.9\linewidth]{mdl}
 
@@ -228,19 +230,23 @@ Proposed deep convolutional neural network architecture for bandwidth extension.
 \end{frame}
 
 \begin{frame}{A word on dilation}
-  \only<2>{
+  \only<1>{
   From a signal processing standpoint,
   \begin{itemize}
     \item this procedure is equivalent to applying the convolution on a down-sampled version of the input.
-    \item As a result each hidden layer increases the receptive field by $D(K-1)$ frequency bins
+    \item As a result each hidden layer increases the receptive field by $D_l(K-1)$ frequency bins
     \item compared to $K-1$ without dilation.
   \end{itemize}
 }
-\only<1>{
+\only<2>{
   \begin{center}
-%  \includegraphics[width=.8\linewidth]{dilation2}
-dilation2
-Dilation can be viewed as a convolution on a downsampled version of the input (fig from \footfullcitenomarkleft{tan2018gated}).
+  \includegraphics[width=.6\linewidth]{dilation111}\\
+No dilation: small receptive field \footfullcitenomarkleft{tan2018gated}
+  \end{center}}
+\only<3>{
+  \begin{center}
+  \includegraphics[width=.6\linewidth]{dilation124}\\
+Dilation: size of receptive field increased \footfullcitenomarkleft{tan2018gated}
   \end{center}}
 \end{frame}
 
@@ -258,6 +264,19 @@ Pre-processing:
   \item short-term Fourier transform with frame size of $256$ samples, hop size of $128$ samples and a Hann window.
   \item "textures" of $10$ frames, processed as individual examples.
 \end{enumerate}
+\end{frame}
+
+\begin{frame}{Training}
+  The same training procedure is applied to all deep learning approaches:
+  \begin{itemize}
+    \item \textbf{loss function}: mean squared error (MSE)
+    \item \textbf{Optimizer}: Adam algorithm operated for
+    \begin{itemize}
+      \item $30$ epochs
+      \item minibatches of $64$ examples
+      \item learning rate of $0.001$.
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Metrics}
@@ -285,7 +304,7 @@ Three baselines are considered:
 \end{enumerate}
 \end{frame}
 
-\section{Experiments}
+\section{Results}
 
 \begin{frame}{Inspection of predicted high frequencies}
   \centering
@@ -316,12 +335,12 @@ Three baselines are considered:
 \begin{tabular}{llcc}
 $L$ & dilation ($D$) & \textit{medley-solos-db} & \textit{gtzan} \\
 \hline
-5 & 1 & 0.240 $\pm$0.013 & 0.110 $\pm$0.017 \\
-6 & 1 & 0.231 $\pm$0.016 & 0.107 $\pm$0.021 \\
-7 & 1 & 0.226 $\pm$0.016 & 0.105 $\pm$0.021 \\
-5 & 2 & 0.228 $\pm$0.015 & 0.102 $\pm$0.019 \\
-6 & 2 & 0.225 $\pm$0.019 & 0.102 $\pm$0.022 \\
-7 & 2 & 0.218 $\pm$0.019 & 0.102 $\pm$0.022 \\
+5 & 1 & 0.240  & 0.110 \\
+6 & 1 & 0.231  & 0.107 \\
+7 & 1 & 0.226  & 0.105 \\
+5 & 2 & 0.228  & \textcolor{red}{0.102} \\
+6 & 2 & 0.225  & \textcolor{red}{0.102} \\
+7 & 2 & \textcolor{red}{0.218}  & \textcolor{red}{0.102} \\
 % 5 & 3 & - $\pm$- &     - $\pm$- \\
 % 6 & 3 & - $\pm$- &     - $\pm$- \\
 % 7 & 3 & 0.103 $\pm$0.022 &     - $\pm$- \\
@@ -336,7 +355,7 @@ Spectral loss on the testing set for the proposed architecture with $K=17$ and $
 \begin{tabular}{lcc}
 method & \textit{medley-solos-db} & \textit{gtzan} \\
 \hline
-proposed & 0.225 $\pm$0.019 & 0.102 $\pm$0.022 \\
+proposed & \textcolor{red}{0.225} $\pm$0.019 & \textcolor{red}{0.102} $\pm$0.022 \\
 cnn bottleneck & 0.241 $\pm$0.011 & 0.107 $\pm$0.017 \\
 cnn stride2 & 0.228 $\pm$0.013 & 0.110 $\pm$0.017 \\
 \end{tabular}
@@ -348,17 +367,27 @@ cnn stride2 & 0.228 $\pm$0.013 & 0.110 $\pm$0.017 \\
   \begin{tabular}{lcc}
   method & \textit{medley-solos-db} & \textit{gtzan} \\
   \hline
-  null & 90.9 $\pm$1.6 & 89.7 $\pm$2.3  \\
+  null & \textcolor{red}{90.9} $\pm$1.6 & 89.7 $\pm$2.3  \\
   replicate & 86.5 $\pm$1.4 & 88.4 $\pm$1.8 \\
   \hline
   cnn bottleneck & 86.6 $\pm$1.5 & 91.3 $\pm$1.8 \\
   cnn stride2 & 86.9 $\pm$1.3 & 90.4 $\pm$2.1 \\
   \hline
-  proposed & 87.5 $\pm$1.4 & 91.5 $\pm$1.8 \\
+  proposed & 87.5 $\pm$1.4 & \textcolor{red}{91.5} $\pm$1.8 \\
   \hline
   oracle & 97.2 $\pm$0.3 & 97.2 $\pm$0.6 \\
 \end{tabular}
   \end{center}
+\end{frame}
+
+\begin{frame}{Conclusions}
+\begin{enumerate}
+  \item the vanilla CNN architecture compares favorably to 2 autoencoder architectures
+  \item dilation matters to increase the receptive field at low cost
+  \item Bandwidth extension is a great task to study the predictive behavior of deep learning architectures
+  \item \textbf{Code}: \url{https://github.com/mathieulagrange/paperBandwidthExtensionCnn}
+  \item \textbf{Audio examples}: \url{https://mathieulagrange.github.io/paperBandwidthExtensionCnn/demo}.
+\end{enumerate}
 \end{frame}
 
 \begin{frame}{Forthcoming Research}
